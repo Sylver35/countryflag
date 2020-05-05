@@ -180,8 +180,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function user_profile_sql_ary($event)
 	{
-		$ary = array($event['sql_ary']);
-		$event['sql_ary'] = array_merge($ary, array(
+		$event['sql_ary'] = array_merge(array($event['sql_ary']), array(
 			'user_country'	=> $event['data']['user_country'],
 		));
 	}
@@ -248,7 +247,7 @@ class listener implements EventSubscriberInterface
 				$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
 				if ($flag)
 				{
-					$event['post_row'] = array_merge($event['post_row'], array(
+					$event['post_row'] = array_merge(array($event['post_row']), array(
 						'S_COUNTRY_IMG_ANIM'	=> true,
 						'COUNTRY_IMG_ANIM'		=> $flag['image'],
 						'COUNTRY_USER'			=> $flag['country'],
@@ -257,7 +256,7 @@ class listener implements EventSubscriberInterface
 				}
 			}
 		}
-		$event['post_row'] = array_merge($event['post_row'], array(
+		$event['post_row'] = array_merge(array($event['post_row']), array(
 			'S_COUNTRY_IMG_ANIM'	=> false,
 		));
 	}
@@ -276,8 +275,7 @@ class listener implements EventSubscriberInterface
 				$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
 				if ($flag)
 				{
-					$data = array($event['msg_data']);
-					$event['msg_data'] = array_merge($data, array(
+					$event['msg_data'] = array_merge(array($event['msg_data']), array(
 						'S_COUNTRY_IMG_ANIM'	=> true,
 						'COUNTRY_IMG_ANIM'		=> $flag['image'],
 						'COUNTRY_USER'			=> $flag['country'],
@@ -286,7 +284,7 @@ class listener implements EventSubscriberInterface
 				}
 			}
 		}
-		$event['msg_data'] = array_merge($event['msg_data'], array(
+		$event['msg_data'] = array_merge(array($event['msg_data']), array(
 			'S_COUNTRY_IMG_ANIM'	=> false,
 		));
 	}
@@ -298,8 +296,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function viewtopic_cache_user_data($event)
 	{
-		$data = array($event['user_cache_data']);
-		$event['user_cache_data'] = array_merge($data, array(
+		$event['user_cache_data'] = array_merge(array($event['user_cache_data']), array(
 			'user_id' => $event['row']['user_id'],
 		));
 	}
@@ -311,8 +308,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_user_row_after($event)
 	{
-		$user_row = array($event['user_row']);
-		$event['user_row'] = array_merge($user_row, array(
+		$event['user_row'] = array_merge(array($event['user_row']), array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 		$this->country->destroy_country_users_cache();
@@ -325,8 +321,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_agreement_country($event)
 	{
-		$hidden = array($event['s_hidden_fields']);
-		$event['s_hidden_fields'] = array_merge($hidden, array(
+		$event['s_hidden_fields'] = array_merge(array($event['s_hidden_fields']), array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 	}
@@ -340,7 +335,7 @@ class listener implements EventSubscriberInterface
 	{
 		$choice = $this->user->data['user_country_sort'];
 		$country = $this->user->data['user_country'];
-		$event['data'] = array_merge($event['data'], array(
+		$event['data'] = array_merge(array($event['data']), array(
 			'user_country_sort'		=> $this->request->variable('user_country_sort', $choice),
 		));
 		$username = '<span style="color: #' . $this->user->data['user_colour'] . ';font-weight: bold;">' . $this->user->data['username'] . '</span>';
@@ -360,7 +355,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_prefs_personal_update_data($event)
 	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], array(
+		$event['sql_ary'] = array_merge(array($event['sql_ary']), array(
 			'user_country_sort'	=> $event['data']['user_country_sort'],
 		));
 	}
