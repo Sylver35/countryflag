@@ -53,9 +53,9 @@ class country
 	protected $ext_path_web;
 
 	/**
-	* The countryflag database table
-	*
-	* @var string */
+	 * The countryflag database table
+	 *
+	 * @var string */
 	protected $countryflag_table;
 
 	/**
@@ -223,7 +223,7 @@ class country
 
 	public function config_select_flag()
 	{
-		$flag_image	= '0';
+		$flag_image = '0';
 		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';

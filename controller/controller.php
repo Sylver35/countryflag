@@ -8,7 +8,6 @@
  */
 
 namespace sylver35\countryflag\controller;
-
 use sylver35\countryflag\core\country;
 use phpbb\config\config;
 use phpbb\request\request;
@@ -44,17 +43,17 @@ class controller
 	protected $u_action;
 
 	/**
-	* Controller constructor
-	*/
+	 * Controller constructor
+	 */
 	public function __construct(country $country, config $config, request $request, log $log, template $template, user $user, language $language)
 	{
-		$this->country 		= $country;
-		$this->config 		= $config;
-		$this->request		= $request;
-		$this->log			= $log;
-		$this->template 	= $template;
-		$this->user			= $user;
-		$this->language		= $language;
+		$this->country = $country;
+		$this->config = $config;
+		$this->request = $request;
+		$this->log = $log;
+		$this->template = $template;
+		$this->user = $user;
+		$this->language = $language;
 	}
 
 	public function acp_config_countryflag()
