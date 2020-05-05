@@ -46,8 +46,8 @@ class listener implements EventSubscriberInterface
 	protected $php_ext;
 
 	/**
-	* Listener constructor
-	*/
+	 * Listener constructor
+	 */
 	public function __construct(country $country, auth $auth, config $config, template $template, user $user, language $language, request $request, $root_path, $php_ext)
 	{
 		$this->country = $country;
@@ -62,10 +62,10 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	* Function that returns the subscribed events
-	*
-	* @return array Array with the subscribed events
-	*/
+	 * Function that returns the subscribed events
+	 *
+	 * @return array Array with the subscribed events
+	 */
 	static public function getSubscribedEvents()
 	{
 		return array(
@@ -221,7 +221,8 @@ class listener implements EventSubscriberInterface
 		}
 		if ($event['submit'])
 		{
-			$this->country->destroy_country_users_cache();// Refresh the country users cache now
+			// Refresh the country users cache now
+			$this->country->destroy_country_users_cache();
 		}
 	}
 
@@ -318,7 +319,7 @@ class listener implements EventSubscriberInterface
 	public function viewtopic_cache_user_data($event)
 	{
 		$data = array($event['user_cache_data']);
-		$event['user_cache_data'] = array_merge($event['user_cache_data'], array(
+		$event['user_cache_data'] = array_merge($data, array(
 			'user_id' => $event['row']['user_id'],
 		));
 	}
