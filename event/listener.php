@@ -107,33 +107,13 @@ class listener implements EventSubscriberInterface
 			if ($this->config['countryflag_required'] && $this->auth->acl_get('u_chgprofileinfo'))
 			{
 				// Display message choosing country
-				if ($this->config['countryflag_message'])
-				{
-					$this->template->assign_vars(array(
-						'S_COUNTRY_MESSAGE_DISPLAY'	=> true,
-						'COUNTRY_PROFILE_GO_TO'		=> $this->language->lang('COUNTRY_REDIRECT_MSG', '<a href="' . append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info') . '">', '</a>'),
-					));
-				}
+				$this->country->display_message();
 				// Redirect if needed
-				if ($this->config['countryflag_redirect'])
-				{
-					$page_name = substr($this->user->page['page_name'], 0, strpos($this->user->page['page_name'], '.'));
-					if ($page_name != 'ucp' && $page_name != 'posting')
-					{
-						redirect(append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info'));
-					}
-				}
+				$this->country->redirect_to_profile();
 			}
 		}
-		if (!$this->user->data['is_registered'] || $this->user->data['is_bot'])
-		{
-			if ($version = $this->country->get_country_users_cache())
-			{
-				$this->template->assign_vars(array(
-					'COUNTRYFLAG_COPY'	=> $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']),
-				));
-			}
-		}
+		// Write version if needed
+		$this->country->write_version();
 	}
 
 	/**
@@ -331,7 +311,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_user_row_after($event)
 	{
-		$event['user_row'] = array_merge($event['user_row'], array(
+		$user_row = array($event['user_row']);
+		$event['user_row'] = array_merge($user_row, array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 		$this->country->destroy_country_users_cache();
