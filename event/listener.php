@@ -119,7 +119,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Display flag with username
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function modify_username_string_flag($event)
 	{
@@ -146,7 +146,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add country select in profile
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function user_country_profile($event)
 	{
@@ -156,7 +156,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add country select in register form
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function user_country_profile_register($event)
 	{
@@ -166,7 +166,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add country select in acp profile
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function acp_user_country_profile($event)
 	{
@@ -176,11 +176,11 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add user country in sql ary
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function user_profile_sql_ary($event)
 	{
-		$event['sql_ary'] = array_merge(array($event['sql_ary']), array(
+		$event['sql_ary'] = array_merge($event['sql_ary'], array(
 			'user_country'	=> $event['data']['user_country'],
 		));
 	}
@@ -188,7 +188,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Validate country in profile
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function user_profile_validate($event)
 	{
@@ -208,7 +208,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Display country and flag in view profile
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function memberlist_view_profile_img_anim($event)
 	{
@@ -236,7 +236,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Display country and flag in viewtopic
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function viewtopic_post_row_img_anim($event)
 	{
@@ -247,7 +247,7 @@ class listener implements EventSubscriberInterface
 				$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
 				if ($flag)
 				{
-					$event['post_row'] = array_merge(array($event['post_row']), array(
+					$event['post_row'] = array_merge($event['post_row'], array(
 						'S_COUNTRY_IMG_ANIM'	=> true,
 						'COUNTRY_IMG_ANIM'		=> $flag['image'],
 						'COUNTRY_USER'			=> $flag['country'],
@@ -256,7 +256,7 @@ class listener implements EventSubscriberInterface
 				}
 			}
 		}
-		$event['post_row'] = array_merge(array($event['post_row']), array(
+		$event['post_row'] = array_merge($event['post_row'], array(
 			'S_COUNTRY_IMG_ANIM'	=> false,
 		));
 	}
@@ -264,7 +264,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add flag and country in pm
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function ucp_pm_view_messsage($event)
 	{
@@ -275,7 +275,7 @@ class listener implements EventSubscriberInterface
 				$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
 				if ($flag)
 				{
-					$event['msg_data'] = array_merge(array($event['msg_data']), array(
+					$event['msg_data'] = array_merge($event['msg_data'], array(
 						'S_COUNTRY_IMG_ANIM'	=> true,
 						'COUNTRY_IMG_ANIM'		=> $flag['image'],
 						'COUNTRY_USER'			=> $flag['country'],
@@ -284,7 +284,7 @@ class listener implements EventSubscriberInterface
 				}
 			}
 		}
-		$event['msg_data'] = array_merge(array($event['msg_data']), array(
+		$event['msg_data'] = array_merge($event['msg_data'], array(
 			'S_COUNTRY_IMG_ANIM'	=> false,
 		));
 	}
@@ -292,11 +292,11 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add country in viewtopic cache data
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function viewtopic_cache_user_data($event)
 	{
-		$event['user_cache_data'] = array_merge(array($event['user_cache_data']), array(
+		$event['user_cache_data'] = array_merge($event['user_cache_data'], array(
 			'user_id' => $event['row']['user_id'],
 		));
 	}
@@ -304,11 +304,11 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Update registration data
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function ucp_register_user_row_after($event)
 	{
-		$event['user_row'] = array_merge(array($event['user_row']), array(
+		$event['user_row'] = array_merge($event['user_row'], array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 		$this->country->destroy_country_users_cache();
@@ -317,11 +317,11 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add user_country in hidden fields in registration form
 	 *
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function ucp_register_agreement_country($event)
 	{
-		$event['s_hidden_fields'] = array_merge(array($event['s_hidden_fields']), array(
+		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 	}
@@ -329,13 +329,13 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add user_country_sort in prefs personal data
 	 * Since 1.4.0 version
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function ucp_prefs_personal_data($event)
 	{
 		$choice = $this->user->data['user_country_sort'];
 		$country = $this->user->data['user_country'];
-		$event['data'] = array_merge(array($event['data']), array(
+		$event['data'] = array_merge($event['data'], array(
 			'user_country_sort'		=> $this->request->variable('user_country_sort', $choice),
 		));
 		$username = '<span style="color: #' . $this->user->data['user_colour'] . ';font-weight: bold;">' . $this->user->data['username'] . '</span>';
@@ -351,11 +351,11 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Update prefs personal data
 	 * Since 1.4.0 version
-	 * @param \phpbb\event\data $event
+	 * @param array $event
 	 */
 	public function ucp_prefs_personal_update_data($event)
 	{
-		$event['sql_ary'] = array_merge(array($event['sql_ary']), array(
+		$event['sql_ary'] = array_merge($event['sql_ary'], array(
 			'user_country_sort'	=> $event['data']['user_country_sort'],
 		));
 	}
