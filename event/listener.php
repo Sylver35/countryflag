@@ -7,7 +7,6 @@
  */
 
 namespace sylver35\countryflag\event;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\countryflag\core\country;
 use phpbb\auth\auth;
@@ -51,15 +50,15 @@ class listener implements EventSubscriberInterface
 	*/
 	public function __construct(country $country, auth $auth, config $config, template $template, user $user, language $language, request $request, $root_path, $php_ext)
 	{
-		$this->country 			= $country;
-		$this->auth				= $auth;
-		$this->config			= $config;
-		$this->template 		= $template;
-		$this->user 			= $user;
-		$this->language			= $language;
-		$this->request			= $request;
-		$this->root_path		= $root_path;
-		$this->php_ext			= $php_ext;
+		$this->country = $country;
+		$this->auth = $auth;
+		$this->config = $config;
+		$this->template = $template;
+		$this->user = $user;
+		$this->language = $language;
+		$this->request = $request;
+		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -201,7 +200,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function user_profile_sql_ary($event)
 	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], array(
+		$ary = array($event['sql_ary']);
+		$event['sql_ary'] = array_merge($ary, array(
 			'user_country'	=> $event['data']['user_country'],
 		));
 	}
@@ -248,7 +248,9 @@ class listener implements EventSubscriberInterface
 				}
 			}
 		}
-		$this->template->assign_var('S_COUNTRY_IMG_ANIM', false);
+		$this->template->assign_vars(array(
+			'S_COUNTRY_IMG_ANIM'	=> false,
+		));
 	}
 
 	/**
@@ -293,7 +295,8 @@ class listener implements EventSubscriberInterface
 				$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
 				if ($flag)
 				{
-					$event['msg_data'] = array_merge($event['msg_data'], array(
+					$data = array($event['msg_data']);
+					$event['msg_data'] = array_merge($data, array(
 						'S_COUNTRY_IMG_ANIM'	=> true,
 						'COUNTRY_IMG_ANIM'		=> $flag['image'],
 						'COUNTRY_USER'			=> $flag['country'],
@@ -314,6 +317,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function viewtopic_cache_user_data($event)
 	{
+		$data = array($event['user_cache_data']);
 		$event['user_cache_data'] = array_merge($event['user_cache_data'], array(
 			'user_id' => $event['row']['user_id'],
 		));
@@ -339,7 +343,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_agreement_country($event)
 	{
-		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], array(
+		$hidden = array($event['s_hidden_fields']);
+		$event['s_hidden_fields'] = array_merge($hidden, array(
 			'user_country'	=> $this->request->variable('user_country', ''),
 		));
 	}

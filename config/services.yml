@@ -38,5 +38,4 @@ services:
             - '@language'
             - '@ext.manager'
             - '@path_helper'
-            - '%core.root_path%'
             - '%sylver35.countryflag.tables.countryflag%'

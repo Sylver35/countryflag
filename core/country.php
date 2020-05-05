@@ -7,7 +7,6 @@
  */
 
 namespace sylver35\countryflag\core;
-
 use phpbb\config\config;
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
@@ -47,9 +46,6 @@ class country
 	/* @var \phpbb\path_helper */
 	protected $path_helper;
 
-	/** @var string phpBB root path */
-	protected $root_path;
-
 	/** @var string ext path */
 	protected $ext_path;
 
@@ -65,20 +61,20 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, path_helper $path_helper, $root_path, $countryflag_table)
+	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, path_helper $path_helper, $countryflag_table)
 	{
-		$this->config 				= $config;
-		$this->cache 				= $cache;
-		$this->db 					= $db;
-		$this->request				= $request;
-		$this->template 			= $template;
-		$this->user 				= $user;
-		$this->language				= $language;
-		$this->ext_manager			= $ext_manager;
-		$this->path_helper	 		= $path_helper;
-		$this->countryflag_table 	= $countryflag_table;
-		$this->ext_path 			= $this->ext_manager->get_extension_path('sylver35/countryflag', true);
-		$this->ext_path_web 		= $this->path_helper->update_web_root_path($this->ext_path);
+		$this->config = $config;
+		$this->cache = $cache;
+		$this->db = $db;
+		$this->request = $request;
+		$this->template = $template;
+		$this->user = $user;
+		$this->language = $language;
+		$this->ext_manager = $ext_manager;
+		$this->path_helper = $path_helper;
+		$this->countryflag_table = $countryflag_table;
+		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/countryflag', true);
+		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function get_country_users_cache()
@@ -96,6 +92,7 @@ class country
 		$this->language->add_lang('countryflag', 'sylver35/countryflag');
 		if ($this->cache->get('_country_users') === false)
 		{
+			$country = [];
 			$country[0] = $this->get_version();
 			$sql_ary = array(
 				'SELECT'	=> 'u.user_id, u.user_country, c.id, c.code_iso, c.country_en, c.country_fr',
@@ -137,7 +134,6 @@ class country
 
 	public function get_country_img($username, $iso, $country, $force = false)
 	{
-		$ltr = ($this->language->lang('DIRECTION') == 'ltr') ? true : false;
 		$position = $this->config['countryflag_position'];
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && !$force)
 		{
