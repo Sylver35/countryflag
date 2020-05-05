@@ -10,7 +10,7 @@ namespace sylver35\countryflag\acp;
 
 class main_info
 {
-	function module()
+	public function module()
 	{
 		return array(
 			'filename'	=> '\sylver35\countryflag\acp\main_module',
