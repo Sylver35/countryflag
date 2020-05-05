@@ -133,6 +133,44 @@ class country
 		);
 	}
 
+	public function display_message()
+	{
+		// Display message choosing country
+		if ($this->config['countryflag_message'])
+		{
+			$this->template->assign_vars(array(
+				'S_COUNTRY_MESSAGE_DISPLAY'	=> true,
+				'COUNTRY_PROFILE_GO_TO'		=> $this->language->lang('COUNTRY_REDIRECT_MSG', '<a href="' . append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info') . '">', '</a>'),
+			));
+		}
+	}
+
+	public function redirect_to_profile()
+	{
+		// Redirect if needed
+		if ($this->config['countryflag_redirect'])
+		{
+			$page_name = substr($this->user->page['page_name'], 0, strpos($this->user->page['page_name'], '.'));
+			if ($page_name != 'ucp' && $page_name != 'posting')
+			{
+				redirect(append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info'));
+			}
+		}
+	}
+
+	public function write_version()
+	{
+		if (!$this->user->data['is_registered'] || $this->user->data['is_bot'])
+		{
+			if ($version = $this->get_country_users_cache())
+			{
+				$this->template->assign_vars(array(
+					'COUNTRYFLAG_COPY'	=> $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']),
+				));
+			}
+		}
+	}
+
 	public function get_country_img($username, $iso, $country, $force = false)
 	{
 		$position = $this->config['countryflag_position'];
