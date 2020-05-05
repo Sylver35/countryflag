@@ -52,6 +52,12 @@ class country
 	/** @var string ext path web */
 	protected $ext_path_web;
 
+	/** @var string phpBB root path */
+	protected $root_path;
+
+	/** @var string phpEx */
+	protected $php_ext;
+
 	/**
 	 * The countryflag database table
 	 *
@@ -61,7 +67,7 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, path_helper $path_helper, $countryflag_table)
+	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $countryflag_table)
 	{
 		$this->config = $config;
 		$this->cache = $cache;
@@ -72,6 +78,8 @@ class country
 		$this->language = $language;
 		$this->ext_manager = $ext_manager;
 		$this->path_helper = $path_helper;
+		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 		$this->countryflag_table = $countryflag_table;
 		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/countryflag', true);
 		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
