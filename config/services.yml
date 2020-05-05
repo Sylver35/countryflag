@@ -1,0 +1,42 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    sylver35.countryflag.listener:
+        class: sylver35\countryflag\event\listener
+        arguments:
+            - '@sylver35.countryflag.country'
+            - '@auth'
+            - '@config'
+            - '@template'
+            - '@user'
+            - '@language'
+            - '@request'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: event.listener }
+    sylver35.countryflag.controller:
+        class: sylver35\countryflag\controller\controller
+        arguments:
+            - '@sylver35.countryflag.country'
+            - '@config'
+            - '@request'
+            - '@log'
+            - '@template'
+            - '@user'
+            - '@language'
+    sylver35.countryflag.country:
+        class: sylver35\countryflag\core\country
+        arguments:
+            - '@config'
+            - '@cache.driver'
+            - '@dbal.conn'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@language'
+            - '@ext.manager'
+            - '@path_helper'
+            - '%core.root_path%'
+            - '%sylver35.countryflag.tables.countryflag%'

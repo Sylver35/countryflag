@@ -1,0 +1,75 @@
+/* Breizh Country Flag Extension Style
+   By Sylver35  https://breizhcode.com
+----------------------------------------*/
+
+p.flag-copy {
+	text-align: center;
+	font-size: 1em;
+}
+
+img.flag-user, .notification_list ul li img.flag-user {
+	margin: 0;
+	vertical-align: baseline;
+	display: inline !important;
+	float: none;
+}
+
+img.flag-6 {
+	max-width: 6px;
+}
+
+img.flag-7 {
+	max-width: 7px;
+}
+
+img.flag-8 {
+	max-width: 8px;
+}
+
+img.flag-9 {
+	max-width: 9px;
+}
+
+img.flag-10 {
+	max-width: 10px;
+}
+
+img.flag-11 {
+	max-width: 11px;
+}
+
+img.flag-12 {
+	max-width: 12px;
+}
+
+img.flag-13 {
+	max-width: 13px;
+}
+
+img.flag-14 {
+	max-width: 14px;
+}
+
+img.flag-15 {
+	max-width: 15px;
+}
+
+img.flag-16 {
+	max-width: 16px;
+}
+
+img.flag-17 {
+	max-width: 17px;
+}
+
+img.flag-18 {
+	max-width: 18px;
+}
+
+img.flag-19 {
+	max-width: 19px;
+}
+
+img.flag-20 {
+	max-width: 20px;
+}

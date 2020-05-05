@@ -1,0 +1,17 @@
+<dl>
+	<dt>
+		<label>{{ lang('COUNTRYFLAG_POSITION') }}{{ lang('COLON') }}</label><br />
+		<span>{{ lang('COUNTRYFLAG_POSITION_EXPLAIN') }}</span>
+	</dt>
+	<dd>
+		<select id="user_country_sort" name="user_country_sort" onchange="reverseDisplay(this.options[selectedIndex].id);">{{ COUNTRY_SELECT }}</select>&nbsp;&nbsp;<span id="username1" style="display:{{ DISPLAY_1 }};">{{ COUNTRY_NAME_1 }}</span><span id="username2" style="display:{{ DISPLAY_2 }};">{{ COUNTRY_NAME_2 }}</span>
+	</dd>
+</dl>
+<script>
+function reverseDisplay(value){
+	var value1 = value.replace('a','').replace('b','');
+	var value2 = (value1 == 1) ? 2 : 1;
+	$('#username'+value1).show();
+	$('#username'+value2).hide();
+}
+</script>

@@ -1,0 +1,2 @@
+parameters:
+    sylver35.countryflag.tables.countryflag: '%core.table_prefix%countryflag'

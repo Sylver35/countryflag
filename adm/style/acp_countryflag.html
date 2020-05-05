@@ -1,0 +1,103 @@
+{% INCLUDE 'overall_header.html' %}
+
+<a name="maincontent"></a>
+
+<h1>{{ lang('COUNTRYFLAG_TITLE') }}</h1>
+
+<p>{{ lang('COUNTRYFLAG_TITLE_EXPLAIN') }}</p>
+
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+
+<form id="acp_countryflag" method="post" action="{U_ACTION}">
+<fieldset>
+	<legend>{{ lang('ACP_COUNTRYFLAG_CONFIG') }}</legend>
+		
+		<dl>
+			<dt><label for="countryflag_required">{{ lang('COUNTRYFLAG_REQUIRE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_REQUIRE_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_required" value="1"{% if COUNTRYFLAG_REQUIRED %} checked="checked" id="countryflag_required"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_required" value="0"{% if not COUNTRYFLAG_REQUIRED %} checked="checked" id="countryflag_required"{% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_message">{{ lang('COUNTRYFLAG_MESSAGE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_MESSAGE_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_message" value="1"{% if COUNTRYFLAG_MESSAGE %} checked="checked" id="countryflag_message"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_message" value="0"{% if not COUNTRYFLAG_MESSAGE %} checked="checked" id="countryflag_message"{% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_redirect">{{ lang('COUNTRYFLAG_REDIRECT') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_REDIRECT_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_redirect" value="1"{% if COUNTRYFLAG_REDIRECT %} checked="checked" id="countryflag_redirect"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_redirect" value="0"{% if not COUNTRYFLAG_REDIRECT %} checked="checked" id="countryflag_redirect"{% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_position">{{ lang('COUNTRYFLAG_POSITION') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_POSITION_EXPLAIN') }}<br />{{ lang('COUNTRYFLAG_POSITION_EXP_2') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_position" value="1"{% if COUNTRYFLAG_POSITION %} checked="checked" id="countryflag_position"{% endif %} /> {{ lang('COUNTRYFLAG_BEFORE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_position" value="0"{% if not COUNTRYFLAG_POSITION %} checked="checked" id="countryflag_position"{% endif %} /> {{ lang('COUNTRYFLAG_AFTER') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_default">{{ lang('COUNTRYFLAG_IMAGE') }}{{ lang('COLON') }}</label><br />{{ lang('COUNTRYFLAG_IMAGE_EXPLAIN') }}</dt>
+			<dd><select id="countryflag_default" name="countryflag_default" title="{{ COUNTRY_FLAG_TITLE }}" onchange="update_flag(this.options[selectedIndex].value,this.options[selectedIndex].text);">{{ S_COUNTRY_FLAG_OPTIONS }}</select>&nbsp;&nbsp;&nbsp;<img src="{{ COUNTRY_FLAG_IMAGE }}" id="user_country_img" alt="{{ COUNTRY_FLAG_TITLE }}" title="{{ COUNTRY_FLAG_TITLE }}" width="22" style="vertical-align:middle;" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_width">{{ lang('COUNTRYFLAG_WIDTH') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_WIDTH_EXPLAIN') }}</span></dt>
+			<dd><input id="countryflag_width" type="text" size="2" maxlength="2" name="countryflag_width" value="{{ COUNTRYFLAG_WIDTH }}" /> {{ lang('PIXEL') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_width_anim">{{ lang('COUNTRYFLAG_WIDTH_ANIM') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_WIDTH_ANIM_EXPLAIN') }}</span></dt>
+			<dd><input id="countryflag_width_anim" type="text" size="2" maxlength="2" name="countryflag_width_anim" value="{{ COUNTRYFLAG_WIDTH_ANIM }}" /> {{ lang('PIXEL') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_display_topic">{{ lang('COUNTRYFLAG_ANIM') }}{L_COLON}</label><br /><span>{{ lang('COUNTRYFLAG_ANIM_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_display_topic" value="1"{% if COUNTRYFLAG_DISPLAY_TOPIC %} checked="checked" id="countryflag_display_topic"{% endif %} /> {{ lang('COUNTRYFLAG_ACTIVATE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_display_topic" value="0"{% if not COUNTRYFLAG_DISPLAY_TOPIC %} checked="checked" id="countryflag_display_topic"{% endif %} /> {{ lang('COUNTRYFLAG_DEACTIVATE') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_display_pm">{{ lang('COUNTRYFLAG_ANIM_PRIV') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_ANIM_PRIV_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_display_pm" value="1"{% if COUNTRYFLAG_DISPLAY_PM %} checked="checked" id="countryflag_display_pm"{% endif %} /> {{ lang('COUNTRYFLAG_ACTIVATE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_display_pm" value="0"{% if not COUNTRYFLAG_DISPLAY_PM %} checked="checked" id="countryflag_display_pm"{% endif %} /> {{ lang('COUNTRYFLAG_DEACTIVATE') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_display_memberlist">{{ lang('COUNTRYFLAG_ANIM_USER') }}{{ lang('COLON') }}</label><br /><span>{{ lang('COUNTRYFLAG_ANIM_USER_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_display_memberlist" value="1"{% if COUNTRYFLAG_DISPLAY_MEMBERLIST %} checked="checked" id="countryflag_display_memberlist"{% endif %} /> {{ lang('COUNTRYFLAG_ACTIVATE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_display_memberlist" value="0"{% if not COUNTRYFLAG_DISPLAY_MEMBERLIST %} checked="checked" id="countryflag_display_memberlist"{% endif %} /> {{ lang('COUNTRYFLAG_DEACTIVATE') }}</label>
+			</dd>
+		</dl>	
+		
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		</p>
+		
+	</fieldset>
+	{S_FORM_TOKEN}
+</form>
+
+<p class="flag-copy"><em>{{ COUNTRYFLAG_COPY }}</em></p>
+
+<script>
+	/**
+	* Change flags
+	*/
+	function update_flag(newFlag, newCountry){
+		$('#user_country_img').attr({'src':'{{ COUNTRY_FLAG_PATH }}'+newFlag+'.png', 'title':newCountry+' ('+newFlag+')', 'alt':newCountry});
+		$('#countryflag_default').attr('title', newCountry+' ('+newFlag+')');
+	}
+</script>
+
+{% INCLUDE 'overall_footer.html' %}
