@@ -15,7 +15,6 @@ use phpbb\template\template;
 use phpbb\user;
 use phpbb\language\language;
 use phpbb\extension\manager;
-use phpbb\path_helper;
 
 class country
 {
@@ -43,15 +42,6 @@ class country
 	/** @var \phpbb\extension\manager */
 	protected $ext_manager;
 
-	/* @var \phpbb\path_helper */
-	protected $path_helper;
-
-	/** @var string ext path */
-	protected $ext_path;
-
-	/** @var string ext path web */
-	protected $ext_path_web;
-
 	/** @var string phpBB root path */
 	protected $root_path;
 
@@ -67,7 +57,7 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $countryflag_table)
+	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
 	{
 		$this->config = $config;
 		$this->cache = $cache;
@@ -77,12 +67,9 @@ class country
 		$this->user = $user;
 		$this->language = $language;
 		$this->ext_manager = $ext_manager;
-		$this->path_helper = $path_helper;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->countryflag_table = $countryflag_table;
-		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/countryflag', true);
-		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function get_country_users_cache()
@@ -199,7 +186,7 @@ class country
 			$position = ($force == 'left') ? true : false;
 		}
 
-		$flag = sprintf($this->config['countryflag_img'], $this->ext_path_web . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
+		$flag = sprintf($this->config['countryflag_img'], generate_board_url() . '/ext/sylver35/countryflag/flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
 		// Display the flag before username
 		if ($position)
@@ -221,7 +208,7 @@ class country
 		if (isset($country[$id]['user_id']))
 		{
 			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-			$src = $this->ext_path_web . 'anim/' . $country[$id]['code_iso'] . '.gif';
+			$src = generate_board_url() . '/ext/sylver35/countryflag/anim/' . $country[$id]['code_iso'] . '.gif';
 			return array(
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
@@ -260,8 +247,8 @@ class country
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_PATH'			=> $this->ext_path_web . 'flags/',
-			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path_web . 'flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_PATH'			=> generate_board_url() . '/ext/sylver35/countryflag/flags/',
+			'COUNTRY_FLAG_IMAGE'		=> generate_board_url() . '/ext/sylver35/countryflag/flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		));
@@ -296,8 +283,8 @@ class country
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_PATH'			=> $this->ext_path_web . 'flags/',
-			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path_web . 'flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_PATH'			=> generate_board_url() . '/ext/sylver35/countryflag/flags/',
+			'COUNTRY_FLAG_IMAGE'		=> generate_board_url() . '/ext/sylver35/countryflag/flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		));
