@@ -48,6 +48,9 @@ class country
 	/** @var string phpEx */
 	protected $php_ext;
 
+	/** @var string ext path */
+	protected $ext_path;
+
 	/**
 	 * The countryflag database table
 	 *
@@ -70,6 +73,7 @@ class country
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->countryflag_table = $countryflag_table;
+		$this->ext_path = generate_board_url() . '/ext/sylver35/countryflag/';
 	}
 
 	public function get_country_users_cache()
@@ -90,7 +94,7 @@ class country
 			$country = [];
 			$country[0] = $this->get_version();
 			$sql_ary = array(
-				'SELECT'	=> 'u.user_id, u.user_country, c.id, c.code_iso, c.country_en, c.country_fr',
+				'SELECT'	=> 'u.user_id, u.user_country, c.*',
 				'FROM'		=> array(USERS_TABLE => 'u'),
 				'LEFT_JOIN'	=> array(
 					array(
@@ -186,7 +190,7 @@ class country
 			$position = ($force == 'left') ? true : false;
 		}
 
-		$flag = sprintf($this->config['countryflag_img'], generate_board_url() . '/ext/sylver35/countryflag/flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
+		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
 		// Display the flag before username
 		if ($position)
@@ -208,7 +212,7 @@ class country
 		if (isset($country[$id]['user_id']))
 		{
 			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-			$src = generate_board_url() . '/ext/sylver35/countryflag/anim/' . $country[$id]['code_iso'] . '.gif';
+			$src = $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif';
 			return array(
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
@@ -247,8 +251,8 @@ class country
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_PATH'			=> generate_board_url() . '/ext/sylver35/countryflag/flags/',
-			'COUNTRY_FLAG_IMAGE'		=> generate_board_url() . '/ext/sylver35/countryflag/flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
+			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		));
@@ -283,8 +287,8 @@ class country
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_PATH'			=> generate_board_url() . '/ext/sylver35/countryflag/flags/',
-			'COUNTRY_FLAG_IMAGE'		=> generate_board_url() . '/ext/sylver35/countryflag/flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
+			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		));
