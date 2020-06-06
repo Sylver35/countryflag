@@ -1,0 +1,70 @@
+/* Breizh Country Flag Extension Style
+   By Sylver35  https://breizhcode.com
+----------------------------------------*/
+
+img.flag-user, .notification_list ul li img.flag-user, a.header-avatar img.flag-user, ul li img.flag-user {
+	margin: 0;
+	vertical-align: baseline;
+	display: inline !important;
+	float: none;
+}
+
+img.flag-6, .notification_list ul li img.flag-6, a.header-avatar img.flag-6 {
+	max-width: 6px;
+}
+
+img.flag-7, .notification_list ul li img.flag-7, a.header-avatar img.flag-7 {
+	max-width: 7px;
+}
+
+img.flag-8, .notification_list ul li img.flag-8, a.header-avatar img.flag-8 {
+	max-width: 8px;
+}
+
+img.flag-9, .notification_list ul li img.flag-9, a.header-avatar img.flag-9 {
+	max-width: 9px;
+}
+
+img.flag-10, .notification_list ul li img.flag-10, a.header-avatar img.flag-10 {
+	max-width: 10px;
+}
+
+img.flag-11, .notification_list ul li img.flag-11, a.header-avatar img.flag-11 {
+	max-width: 11px;
+}
+
+img.flag-12, .notification_list ul li img.flag-12, a.header-avatar img.flag-12 {
+	max-width: 12px;
+}
+
+img.flag-13, .notification_list ul li img.flag-13, a.header-avatar img.flag-13 {
+	max-width: 13px;
+}
+
+img.flag-14, .notification_list ul li img.flag-14, a.header-avatar img.flag-14 {
+	max-width: 14px;
+}
+
+img.flag-15, .notification_list ul li img.flag-15, a.header-avatar img.flag-15 {
+	max-width: 15px;
+}
+
+img.flag-16, .notification_list ul li img.flag-16, a.header-avatar img.flag-16 {
+	max-width: 16px;
+}
+
+img.flag-17, .notification_list ul li img.flag-17, a.header-avatar img.flag-17 {
+	max-width: 17px;
+}
+
+img.flag-18, .notification_list ul li img.flag-18, a.header-avatar img.flag-18 {
+	max-width: 18px;
+}
+
+img.flag-19, .notification_list ul li img.flag-19, a.header-avatar img.flag-19 {
+	max-width: 19px;
+}
+
+img.flag-20, .notification_list ul li img.flag-20, a.header-avatar img.flag-20 {
+	max-width: 20px;
+}
