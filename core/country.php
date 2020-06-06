@@ -170,31 +170,29 @@ class country
 		}
 	}
 
-	public function get_country_img($username, $iso, $country, $force = false)
+	public function get_country_img($username, $iso, $country, $force = 'none')
 	{
-		$position = $this->config['countryflag_position'];
-		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && !$force)
+		$position = (bool) $this->config['countryflag_position'];
+		if ($force === 'none')
 		{
-			switch ($this->user->data['user_country_sort'])
+			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 			{
-				case 1:
-					$position = true;
-				break;
-				case 2:
-					$position = false;
-				break;
+				if ($this->user->data['user_country_sort'] != 0)
+				{
+					$position = ($this->user->data['user_country_sort'] == 1) ? true : false;
+				}
 			}
 		}
-		else if ($force)
+		else
 		{
-			$position = ($force == 'left') ? true : false;
+			$position = ($force === 'left') ? true : false;
 		}
 
 		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
-		// Display the flag before username
 		if ($position)
 		{
+			// Display the flag before username
 			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
 		}
 		else
@@ -305,9 +303,9 @@ class country
 
 	public function ucp_sort_select($value)
 	{
-		$select = '<option value="0" id="a' . $this->config['countryflag_position'] . '"' . (($value == 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
-		$select .= '<option value="1" id="b1"' . (($value == 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
-		$select .= '<option value="2" id="b2"' . (($value == 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
+		$select = '<option value="0" ' . (($value == 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
+		$select .= '<option value="1" ' . (($value == 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
+		$select .= '<option value="2" ' . (($value == 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
 
 		return $select;
 	}

@@ -91,9 +91,11 @@ class listener implements EventSubscriberInterface
 		);
 	}
 
+	/**
+	 * Cache country users if needed
+	 */
 	public function load_countryflag()
 	{
-		// Cache country users
 		$this->country->cache_country_users();
 	}
 
@@ -102,6 +104,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function page_header_after()
 	{
+		$this->country->write_version();
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && !$this->user->data['user_country'])
 		{
 			if ($this->config['countryflag_required'] && $this->auth->acl_get('u_chgprofileinfo'))
@@ -112,8 +115,6 @@ class listener implements EventSubscriberInterface
 				$this->country->redirect_to_profile();
 			}
 		}
-		// Write version if needed
-		$this->country->write_version();
 	}
 
 	/**
@@ -132,12 +133,15 @@ class listener implements EventSubscriberInterface
 				if (isset($country[$event['user_id']]['user_id']))
 				{
 					$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-					$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]["country_{$lang}"], false);
+					$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]["country_{$lang}"]);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Destroy cache country users after validate profile
+	 */
 	public function destroy_cache_country_users()
 	{
 		$this->country->destroy_country_users_cache();
@@ -212,20 +216,17 @@ class listener implements EventSubscriberInterface
 	 */
 	public function memberlist_view_profile_img_anim($event)
 	{
-		if ($this->config['countryflag_display_memberlist'])
+		if ($this->config['countryflag_display_memberlist'] && isset($event['member']['user_id']))
 		{
-			if (isset($event['member']['user_id']))
+			$flag = $this->country->get_country_img_anim($event['member']['user_id']);
+			if ($flag)
 			{
-				$flag = $this->country->get_country_img_anim($event['member']['user_id']);
-				if ($flag)
-				{
-					$this->template->assign_vars(array(
-						'S_COUNTRY_IMG_ANIM'	=> true,
-						'COUNTRY_IMG_ANIM'		=> $flag['image'],
-						'COUNTRY_USER'			=> $flag['country'],
-					));
-					return;
-				}
+				$this->template->assign_vars(array(
+					'S_COUNTRY_IMG_ANIM'	=> true,
+					'COUNTRY_IMG_ANIM'		=> $flag['image'],
+					'COUNTRY_USER'			=> $flag['country'],
+				));
+				return;
 			}
 		}
 		$this->template->assign_vars(array(
@@ -240,20 +241,17 @@ class listener implements EventSubscriberInterface
 	 */
 	public function viewtopic_post_row_img_anim($event)
 	{
-		if ($this->config['countryflag_display_topic'])
+		if ($this->config['countryflag_display_topic'] && isset($event['user_poster_data']['user_id']))
 		{
-			if (isset($event['user_poster_data']['user_id']))
+			$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
+			if ($flag)
 			{
-				$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
-				if ($flag)
-				{
-					$event['post_row'] = array_merge($event['post_row'], array(
-						'S_COUNTRY_IMG_ANIM'	=> true,
-						'COUNTRY_IMG_ANIM'		=> $flag['image'],
-						'COUNTRY_USER'			=> $flag['country'],
-					));
-					return;
-				}
+				$event['post_row'] = array_merge($event['post_row'], array(
+					'S_COUNTRY_IMG_ANIM'	=> true,
+					'COUNTRY_IMG_ANIM'		=> $flag['image'],
+					'COUNTRY_USER'			=> $flag['country'],
+				));
+				return;
 			}
 		}
 		$event['post_row'] = array_merge($event['post_row'], array(
@@ -268,20 +266,17 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_pm_view_messsage($event)
 	{
-		if ($this->config['countryflag_display_pm'])
+		if ($this->config['countryflag_display_pm'] && isset($event['user_info']['user_id']))
 		{
-			if (isset($event['user_info']['user_id']))
+			$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
+			if ($flag)
 			{
-				$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
-				if ($flag)
-				{
-					$event['msg_data'] = array_merge($event['msg_data'], array(
-						'S_COUNTRY_IMG_ANIM'	=> true,
-						'COUNTRY_IMG_ANIM'		=> $flag['image'],
-						'COUNTRY_USER'			=> $flag['country'],
-					));
-					return;
-				}
+				$event['msg_data'] = array_merge($event['msg_data'], array(
+					'S_COUNTRY_IMG_ANIM'	=> true,
+					'COUNTRY_IMG_ANIM'		=> $flag['image'],
+					'COUNTRY_USER'			=> $flag['country'],
+				));
+				return;
 			}
 		}
 		$event['msg_data'] = array_merge($event['msg_data'], array(
@@ -333,18 +328,21 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_prefs_personal_data($event)
 	{
-		$choice = $this->user->data['user_country_sort'];
 		$country = $this->user->data['user_country'];
+		$choice = $this->user->data['user_country_sort'];
+		$defaut = $this->config['countryflag_position'] ? 'left' : 'right';
 		$event['data'] = array_merge($event['data'], array(
-			'user_country_sort'		=> $this->request->variable('user_country_sort', $choice),
+			'user_country_sort'	=> $this->request->variable('user_country_sort', $choice),
 		));
 		$username = '<span style="color: #' . $this->user->data['user_colour'] . ';font-weight: bold;">' . $this->user->data['username'] . '</span>';
 		$this->template->assign_vars(array(
 			'COUNTRY_SELECT'	=> $this->country->ucp_sort_select($event['data']['user_country_sort']),
+			'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $country, $country, $defaut),
 			'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $country, $country, 'left'),
 			'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $country, $country, 'right'),
-			'DISPLAY_1'			=> ($choice == 1 || $choice == 0 && $this->config['countryflag_position']) ? 'bloc' : 'none',
-			'DISPLAY_2'			=> ($choice == 2 || $choice == 0 && !$this->config['countryflag_position']) ? 'bloc' : 'none',
+			'DISPLAY_0'			=> ($choice == 0) ? 'bloc' : 'none',
+			'DISPLAY_1'			=> ($choice == 1) ? 'bloc' : 'none',
+			'DISPLAY_2'			=> ($choice == 2) ? 'bloc' : 'none',
 		));
 	}
 
