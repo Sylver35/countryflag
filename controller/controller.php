@@ -11,6 +11,7 @@ namespace sylver35\countryflag\controller;
 use sylver35\countryflag\core\country;
 use phpbb\config\config;
 use phpbb\request\request;
+use phpbb\db\driver\driver_interface as db;
 use phpbb\log\log;
 use phpbb\template\template;
 use phpbb\user;
@@ -27,6 +28,9 @@ class controller
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
 	/** @var \phpbb\log\log */
 	protected $log;
 
@@ -42,18 +46,30 @@ class controller
 	/** @var string Custom form action */
 	protected $u_action;
 
+	/** @var string ext path */
+	protected $ext_path;
+
+	/**
+	 * The countryflag database table
+	 *
+	 * @var string */
+	protected $countryflag_table;
+
 	/**
 	 * Controller constructor
 	 */
-	public function __construct(country $country, config $config, request $request, log $log, template $template, user $user, language $language)
+	public function __construct(country $country, config $config, request $request, db $db, log $log, template $template, user $user, language $language, $countryflag_table)
 	{
 		$this->country = $country;
 		$this->config = $config;
 		$this->request = $request;
+		$this->db = $db;
 		$this->log = $log;
 		$this->template = $template;
 		$this->user = $user;
 		$this->language = $language;
+		$this->countryflag_table = $countryflag_table;
+		$this->ext_path = generate_board_url() . '/ext/sylver35/countryflag/';
 	}
 
 	public function acp_config_countryflag()
@@ -83,7 +99,7 @@ class controller
 		else
 		{
 			$meta = $this->country->get_version();
-			$this->country->config_select_flag();
+			$this->config_select_flag();
 			$this->template->assign_vars(array(
 				'COUNTRYFLAG_REQUIRED'			=> $this->config['countryflag_required'] ? true : false,
 				'COUNTRYFLAG_MESSAGE'			=> $this->config['countryflag_message'] ? true : false,
@@ -97,6 +113,42 @@ class controller
 				'COUNTRYFLAG_COPY'				=> $this->language->lang('COUNTRYFLAG_COPY', $meta['homepage'], $meta['version']),
 			));
 		}
+	}
+
+	private function config_select_flag()
+	{
+		$flag_image = '0';
+		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
+		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
+		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
+		$sql = array(
+			'SELECT'	=> 'id, code_iso, country_en, country_fr',
+			'FROM'		=> array($this->countryflag_table => ''),
+			'ORDER_BY'	=> "country_{$sort}",
+		);
+		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$selected = '';
+			$row['country_fr'] = $this->country->accent_in_country($row['code_iso'], $row['country_fr']);
+			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
+			if ($row['code_iso'] == $this->config['countryflag_default'])
+			{
+				$selected = ' selected="selected"';
+				$title = $country;
+				$flag_image = $row['code_iso'];
+			}
+			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars(array(
+			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
+			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_TITLE'		=> $title,
+			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
+		));
 	}
 
 	/**

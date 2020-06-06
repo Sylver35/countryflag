@@ -256,43 +256,7 @@ class country
 		));
 	}
 
-	public function config_select_flag()
-	{
-		$flag_image = '0';
-		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
-		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
-		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
-		$sql = array(
-			'SELECT'	=> 'id, code_iso, country_en, country_fr',
-			'FROM'		=> array($this->countryflag_table => ''),
-			'ORDER_BY'	=> "country_{$sort}",
-		);
-		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$selected = '';
-			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
-			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] == $this->config['countryflag_default'])
-			{
-				$selected = ' selected="selected"';
-				$title = $country;
-				$flag_image = $row['code_iso'];
-			}
-			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
-		}
-		$this->db->sql_freeresult($result);
-
-		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
-			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
-			'COUNTRY_FLAG_TITLE'		=> $title,
-			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
-		));
-	}
-
-	private function accent_in_country($iso, $country)
+	public function accent_in_country($iso, $country)
 	{
 		if (in_array($iso, array('ae', 'ec', 'eg', 'er', 'et', 'us')))
 		{

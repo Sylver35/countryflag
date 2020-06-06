@@ -22,10 +22,12 @@ services:
             - '@sylver35.countryflag.country'
             - '@config'
             - '@request'
+            - '@dbal.conn'
             - '@log'
             - '@template'
             - '@user'
             - '@language'
+            - '%sylver35.countryflag.tables.countryflag%'
     sylver35.countryflag.country:
         class: sylver35\countryflag\core\country
         arguments:
