@@ -219,12 +219,21 @@ class country
 		return false;
 	}
 
-	private function on_select_flag($flag = false, $on_acp = false, $on_profile = false)
+	/**
+	 * Build select country flag
+	 *
+	 * @param string $flag
+	 * @param bool $on_acp
+	 * @param bool $on_profile
+	 * @return void
+	 * @access private
+	 */
+	private function on_select_flag($flag = '', $on_acp = false, $on_profile = false)
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-		$select = (!$flag && !$this->config['countryflag_default'] && !$on_acp) ? ' selected="selected"' : '';
+		$select = ($flag == '' && !$this->config['countryflag_default'] && !$on_acp) ? ' selected="selected"' : '';
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = array(
@@ -256,6 +265,14 @@ class country
 		));
 	}
 
+	/**
+	 * Add accent for somes flag
+	 *
+	 * @param string $iso
+	 * @param string $country
+	 * @return string
+	 * @access public
+	 */
 	public function accent_in_country($iso, $country)
 	{
 		if (in_array($iso, array('ae', 'ec', 'eg', 'er', 'et', 'us')))
@@ -265,6 +282,13 @@ class country
 		return $country;
 	}
 
+	/**
+	 * Select position of flag
+	 *
+	 * @param int $value
+	 * @return string
+	 * @access public
+	 */
 	public function ucp_sort_select($value)
 	{
 		$select = '<option value="0" ' . (($value == 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
