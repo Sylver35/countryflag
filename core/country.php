@@ -220,6 +220,40 @@ class country
 	}
 
 	/**
+	 * Add country select in member form
+	 *
+	 * @param array $event
+	 * @param string $country
+	 * @param bool $on_acp
+	 * @param bool $on_profile
+	 * @return void
+	 * @access public
+	 */
+	public function add_country($event, $country, $on_acp, $on_profile)
+	{
+		$event['data'] = array_merge($event['data'], array(
+			'user_country'	=> $this->request->variable('user_country', $country),
+		));
+
+		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
+
+		if (!$on_acp)
+		{
+			if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
+			{
+				$this->template->assign_vars(array(
+					'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
+				));
+			}
+		}
+
+		$this->template->assign_vars(array(
+			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
+			'S_COUNTRY_FLAG_ACTIVE'		=> true,
+		));
+	}
+
+	/**
 	 * Build select country flag
 	 *
 	 * @param string $flag
@@ -296,39 +330,5 @@ class country
 		$select .= '<option value="2" ' . (($value == 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
 
 		return $select;
-	}
-
-	/**
-	 * Add country select in member form
-	 *
-	 * @param array $event
-	 * @param string $country
-	 * @param bool $on_acp
-	 * @param bool $on_profile
-	 * @return void
-	 * @access public
-	 */
-	public function add_country($event, $country, $on_acp, $on_profile)
-	{
-		$event['data'] = array_merge($event['data'], array(
-			'user_country'	=> $this->request->variable('user_country', $country),
-		));
-
-		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
-
-		if (!$on_acp)
-		{
-			if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
-			{
-				$this->template->assign_vars(array(
-					'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
-				));
-			}
-		}
-
-		$this->template->assign_vars(array(
-			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
-			'S_COUNTRY_FLAG_ACTIVE'		=> true,
-		));
 	}
 }
