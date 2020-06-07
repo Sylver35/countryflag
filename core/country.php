@@ -274,6 +274,16 @@ class country
 		return $select;
 	}
 
+	/**
+	 * Add country select in member form
+	 *
+	 * @param array $event
+	 * @param string $country
+	 * @param bool $on_acp
+	 * @param bool $on_profile
+	 * @return void
+	 * @access public
+	 */
 	public function add_country($event, $country, $on_acp, $on_profile)
 	{
 		$event['data'] = array_merge($event['data'], array(
