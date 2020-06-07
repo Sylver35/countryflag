@@ -274,26 +274,15 @@ class country
 		return $select;
 	}
 
-	public function add_country($form, $event, $country)
+	public function add_country($event, $country, $on_acp, $on_profile)
 	{
 		$event['data'] = array_merge($event['data'], array(
 			'user_country'	=> $this->request->variable('user_country', $country),
 		));
 
-		if ($form === 'profile')
-		{
-			$this->on_select_flag($event['data']['user_country'], false, true);
-		}
-		else if ($form === 'register')
-		{
-			$this->on_select_flag($event['data']['user_country'], false, false);
-		}
-		else if ($form === 'acp')
-		{
-			$this->on_select_flag($event['data']['user_country'], true, false);
-		}
+		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 
-		if ($form !== 'acp')
+		if (!$on_acp)
 		{
 			if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
 			{

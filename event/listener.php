@@ -154,7 +154,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function user_country_profile($event)
 	{
-		$this->country->add_country('profile', $event, $this->user->data['user_country']);
+		$this->country->add_country($event, $this->user->data['user_country'], false, true);
 	}
 
 	/**
@@ -164,7 +164,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function user_country_profile_register($event)
 	{
-		$this->country->add_country('register', $event, $this->user->data['user_country']);
+		$this->country->add_country($event, $this->user->data['user_country'], false, false);
 	}
 
 	/**
@@ -174,7 +174,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function acp_user_country_profile($event)
 	{
-		$this->country->add_country('acp', $event, $event['user_row']['user_country']);
+		$this->country->add_country($event, $event['user_row']['user_country'], true, false);
 	}
 
 	/**
