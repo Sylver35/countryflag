@@ -204,12 +204,19 @@ class country
 		return $username;
 	}
 
+	/**
+	 * Display anim flag
+	 *
+	 * @param int $id
+	 * @return void
+	 * @access public
+	 */
 	public function get_country_img_anim($id)
 	{
 		$country = $this->cache->get('_country_users');
 		if (isset($country[$id]['user_id']))
 		{
-			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+			$lang = $this->country_lang();
 			$src = $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif';
 			return array(
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
@@ -217,6 +224,27 @@ class country
 			);
 		}
 		return false;
+	}
+
+	/**
+	 * Select lang for country
+	 *
+	 * @param int $id
+	 * @return string
+	 * @access public
+	 */
+	public function country_lang()
+	{
+		if ($this->user->lang_name == 'fr')
+		{
+			$lang = 'fr';
+		}
+		else
+		{
+			$lang = 'en';
+		}
+
+		return $lang;
 	}
 
 	/**
@@ -300,7 +328,7 @@ class country
 	}
 
 	/**
-	 * Add accent for somes flag
+	 * Add accent for somes country
 	 *
 	 * @param string $iso
 	 * @param string $country
@@ -313,6 +341,7 @@ class country
 		{
 			$country = str_replace('E', 'É', $country);
 		}
+
 		return $country;
 	}
 
