@@ -220,7 +220,7 @@ class country
 		);
 		if (isset($country[$id]['user_id']))
 		{
-			$lang = $this->get_country_lang();
+			$lang = $this->select_lang();
 			$src = $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif';
 			$data = array(
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
@@ -234,11 +234,10 @@ class country
 	/**
 	 * Select lang for country
 	 *
-	 * @param int $id
 	 * @return string
 	 * @access public
 	 */
-	public function get_country_lang()
+	public function select_lang()
 	{
 		if ($this->user->lang_name == 'fr')
 		{
