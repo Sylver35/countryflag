@@ -132,7 +132,7 @@ class listener implements EventSubscriberInterface
 				// Do this just for users who have country
 				if (isset($country[$event['user_id']]['user_id']))
 				{
-					$lang = $this->country->select_lang();
+					$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
 					$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]["country_{$lang}"]);
 				}
 			}

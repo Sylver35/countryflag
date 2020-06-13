@@ -118,7 +118,7 @@ class controller
 	private function config_select_flag()
 	{
 		$flag_image = '0';
-		$sort = $this->country->select_lang();
+		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
