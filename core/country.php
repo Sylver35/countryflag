@@ -208,22 +208,27 @@ class country
 	 * Display anim flag
 	 *
 	 * @param int $id
-	 * @return void
+	 * @return array
 	 * @access public
 	 */
 	public function get_country_img_anim($id)
 	{
 		$country = $this->cache->get('_country_users');
+		$data = array(
+			'image'		=> '',
+			'country'	=> '',
+		);
 		if (isset($country[$id]['user_id']))
 		{
-			$lang = $this->country_lang();
+			$lang = $this->get_country_lang();
 			$src = $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif';
-			return array(
+			$data = array(
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
 			);
 		}
-		return false;
+
+		return $data;
 	}
 
 	/**
@@ -233,7 +238,7 @@ class country
 	 * @return string
 	 * @access public
 	 */
-	public function country_lang()
+	public function get_country_lang()
 	{
 		if ($this->user->lang_name == 'fr')
 		{

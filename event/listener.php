@@ -132,7 +132,7 @@ class listener implements EventSubscriberInterface
 				// Do this just for users who have country
 				if (isset($country[$event['user_id']]['user_id']))
 				{
-					$lang = $this->country->country_lang();
+					$lang = $this->country->get_country_lang();
 					$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]["country_{$lang}"]);
 				}
 			}
@@ -219,7 +219,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_display_memberlist'] && isset($event['member']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['member']['user_id']);
-			if ($flag)
+			if ($flag['image'] !== '')
 			{
 				$this->template->assign_vars(array(
 					'S_COUNTRY_IMG_ANIM'	=> true,
@@ -244,7 +244,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_display_topic'] && isset($event['user_poster_data']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
-			if ($flag)
+			if ($flag['image'] !== '')
 			{
 				$event['post_row'] = array_merge($event['post_row'], array(
 					'S_COUNTRY_IMG_ANIM'	=> true,
@@ -269,7 +269,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_display_pm'] && isset($event['user_info']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
-			if ($flag)
+			if ($flag['image'] !== '')
 			{
 				$event['msg_data'] = array_merge($event['msg_data'], array(
 					'S_COUNTRY_IMG_ANIM'	=> true,
