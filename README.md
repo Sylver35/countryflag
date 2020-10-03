@@ -2,7 +2,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/quality-score.png?b=1.5.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/?branch=1.5.0)
 [![Build Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/build.png?b=1.5.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/build-status/1.5.0)
-[[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/code-intelligence.svg?b=1.5.0)](https://scrutinizer-ci.com/code-intelligence)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/code-intelligence.svg?b=1.5.0)](https://scrutinizer-ci.com/code-intelligence)
 
 ## Install
 1. Download the latest release.
