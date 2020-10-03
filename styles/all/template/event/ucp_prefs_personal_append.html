@@ -5,9 +5,9 @@
 	</dt>
 	<dd>
 		<select id="user_country_sort" name="user_country_sort" onchange="reverseDisplay(this.options[selectedIndex].value);">{{ COUNTRY_SELECT }}</select>&nbsp;&nbsp;
-		<span id="username0" style="display:{{ DISPLAY_0 }};">{{ COUNTRY_NAME_0 }}</span>
-		<span id="username1" style="display:{{ DISPLAY_1 }};">{{ COUNTRY_NAME_1 }}</span>
-		<span id="username2" style="display:{{ DISPLAY_2 }};">{{ COUNTRY_NAME_2 }}</span>
+		<span id="username0" style="display:{% if COUNTRY_CHOICE eq 0 %}bloc{% else %}none{% endif %};">{{ COUNTRY_NAME_0 }}</span>
+		<span id="username1" style="display:{% if COUNTRY_CHOICE eq 1 %}bloc{% else %}none{% endif %};">{{ COUNTRY_NAME_1 }}</span>
+		<span id="username2" style="display:{% if COUNTRY_CHOICE eq 2 %}bloc{% else %}none{% endif %};">{{ COUNTRY_NAME_2 }}</span>
 	</dd>
 </dl>
 <script>

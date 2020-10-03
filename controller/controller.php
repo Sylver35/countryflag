@@ -122,6 +122,7 @@ class controller
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
+
 		$sql = array(
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
 			'FROM'		=> array($this->countryflag_table => ''),

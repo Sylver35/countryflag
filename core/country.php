@@ -7,6 +7,7 @@
  */
 
 namespace sylver35\countryflag\core;
+
 use phpbb\config\config;
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
@@ -91,8 +92,8 @@ class country
 		$this->language->add_lang('countryflag', 'sylver35/countryflag');
 		if ($this->cache->get('_country_users') === false)
 		{
-			$country = [];
-			$country[0] = $this->get_version();
+			$countries = [];
+			$countries[0] = $this->get_version();
 			$sql_ary = array(
 				'SELECT'	=> 'u.user_id, u.user_country, c.*',
 				'FROM'		=> array(USERS_TABLE => 'u'),
@@ -108,7 +109,7 @@ class country
 			$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$country[$row['user_id']] = array(
+				$countries[$row['user_id']] = array(
 					'user_id'		=> $row['user_id'],
 					'code_iso'		=> $row['code_iso'],
 					'country_en'	=> $row['country_en'],
@@ -117,7 +118,7 @@ class country
 			}
 			$this->db->sql_freeresult($result);
 			// cache for 7 days
-			$this->cache->put('_country_users', $country, 604800);
+			$this->cache->put('_country_users', $countries, 604800);
 		}
 	}
 
@@ -161,12 +162,10 @@ class country
 	{
 		if (!$this->user->data['is_registered'] || $this->user->data['is_bot'])
 		{
-			if ($version = $this->get_country_users_cache())
-			{
-				$this->template->assign_vars(array(
-					'COUNTRYFLAG_COPY'	=> $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']),
-				));
-			}
+			$version = $this->get_country_users_cache();
+			$this->template->assign_vars(array(
+				'COUNTRYFLAG_COPY'	=> $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']),
+			));
 		}
 	}
 
@@ -177,9 +176,9 @@ class country
 		{
 			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 			{
-				if ($this->user->data['user_country_sort'] != 0)
+				if ((int) $this->user->data['user_country_sort'] !== 0)
 				{
-					$position = ($this->user->data['user_country_sort'] == 1) ? true : false;
+					$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
 				}
 			}
 		}
@@ -214,21 +213,18 @@ class country
 	public function get_country_img_anim($id)
 	{
 		$country = $this->cache->get('_country_users');
-		$data = array(
-			'image'		=> '',
-			'country'	=> '',
-		);
 		if (isset($country[$id]['user_id']))
 		{
 			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-			$src = $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif';
-			$data = array(
-				'image'		=> sprintf($this->config['countryflag_img_anim'], $src, $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
+			return array(
+				'image'		=> sprintf($this->config['countryflag_img_anim'], $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
 			);
 		}
 
-		return $data;
+		return array(
+			'image'	=> '',
+		);
 	}
 
 	/**
@@ -312,7 +308,7 @@ class country
 	}
 
 	/**
-	 * Add accent for somes country
+	 * Add accent for somes countries
 	 *
 	 * @param string $iso
 	 * @param string $country
@@ -338,9 +334,9 @@ class country
 	 */
 	public function ucp_sort_select($value)
 	{
-		$select = '<option value="0" ' . (($value == 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
-		$select .= '<option value="1" ' . (($value == 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
-		$select .= '<option value="2" ' . (($value == 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
+		$select = '<option value="0" ' . (($value === 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
+		$select .= '<option value="1" ' . (($value === 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
+		$select .= '<option value="2" ' . (($value === 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
 
 		return $select;
 	}

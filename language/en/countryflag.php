@@ -75,7 +75,7 @@ $lang = array_merge($lang, array(
 	'USER_COUNTRYFLAG'				=> 'User country flag',
 	'COUNTRY_ERROR'					=> 'You <b>must</b> select your country flag to continue!',
 	'COUNTRY_ERROR_REGISTER'		=> 'You <b>must</b> select your country flag to complete your registration!',
-	'COUNTRY_REDIRECT_MSG'			=> 'You did not fill in your country flag.<br />Thank you for taking the time to fill it %s on this page.%s',
+	'COUNTRY_REDIRECT_MSG'			=> 'You did not fill in your country flag.<br />Thank you for taking the time to fill it %sOn this page%s.',
 	'COUNTRYFLAG_COPY'				=> '<a href="%1$s" onclick="window.open(this.href);return false;" title="Breizh Country Flag">Breizh Country Flag by Sylver35</a> » V %2$s',
 	'LOG_CONFIG_COUNTRYFLAG'		=> '<strong>Changing the flags settings</strong><br /> » Update of the general configuration of the flags of countries',
 ));
