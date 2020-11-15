@@ -63,7 +63,7 @@ class countryflag_initial_data extends \phpbb\db\migration\migration
 					[&$this, 'install_country_flag'],
 				],
 			],
-		);
+		];
 	}
 
 	public function install_country_flag()

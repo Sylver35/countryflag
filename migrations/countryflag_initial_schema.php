@@ -35,7 +35,7 @@ class countryflag_initial_schema extends \phpbb\db\migration\migration
 						'code_iso'		=> ['VCHAR:2', ''],
 						'country_en'	=> ['VCHAR:255', ''],
 						'country_fr'	=> ['VCHAR:255', ''],
-					),
+					],
 					'PRIMARY_KEY'	=> ['id'],
 				],
 			],
