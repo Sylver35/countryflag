@@ -100,7 +100,7 @@ class controller
 		{
 			$meta = $this->country->get_version();
 			$this->config_select_flag();
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'COUNTRYFLAG_REQUIRED'			=> $this->config['countryflag_required'] ? true : false,
 				'COUNTRYFLAG_MESSAGE'			=> $this->config['countryflag_message'] ? true : false,
 				'COUNTRYFLAG_REDIRECT'			=> $this->config['countryflag_redirect'] ? true : false,
@@ -111,7 +111,7 @@ class controller
 				'COUNTRYFLAG_DISPLAY_PM'		=> $this->config['countryflag_display_pm'] ? true : false,
 				'COUNTRYFLAG_DISPLAY_MEMBERLIST'=> $this->config['countryflag_display_memberlist'] ? true : false,
 				'COUNTRYFLAG_COPY'				=> $this->language->lang('COUNTRYFLAG_COPY', $meta['homepage'], $meta['version']),
-			));
+			]);
 		}
 	}
 
@@ -123,11 +123,11 @@ class controller
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 
-		$sql = array(
+		$sql = [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
-			'FROM'		=> array($this->countryflag_table => ''),
+			'FROM'		=> [$this->countryflag_table => ''],
 			'ORDER_BY'	=> "country_{$sort}",
-		);
+		];
 		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -144,12 +144,12 @@ class controller
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
 			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
-		));
+		]);
 	}
 
 	/**

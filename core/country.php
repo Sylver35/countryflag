@@ -94,27 +94,27 @@ class country
 		{
 			$countries = [];
 			$countries[0] = $this->get_version();
-			$sql_ary = array(
+			$sql_ary = [
 				'SELECT'	=> 'u.user_id, u.user_country, c.*',
-				'FROM'		=> array(USERS_TABLE => 'u'),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array($this->countryflag_table => 'c'),
+				'FROM'		=> [USERS_TABLE => 'u'],
+				'LEFT_JOIN'	=> [
+					[
+						'FROM'	=> [$this->countryflag_table => 'c'],
 						'ON'	=> 'c.code_iso = u.user_country',
-					),
-				),
+					],
+				],
 				'WHERE'		=> "u.user_type <> 2 AND u.user_country <> '0'",
 				'ORDER_BY'	=> 'u.user_id ASC',
-			);
+			];
 			$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$countries[$row['user_id']] = array(
+				$countries[$row['user_id']] = [
 					'user_id'		=> $row['user_id'],
 					'code_iso'		=> $row['code_iso'],
 					'country_en'	=> $row['country_en'],
 					'country_fr'	=> $this->accent_in_country($row['code_iso'], $row['country_fr']),
-				);
+				];
 			}
 			$this->db->sql_freeresult($result);
 			// cache for 7 days
@@ -127,10 +127,10 @@ class country
 		$md_manager = $this->ext_manager->create_extension_metadata_manager('sylver35/countryflag');
 		$meta = $md_manager->get_metadata();
 
-		return array(
+		return [
 			'version'	=> $meta['version'],
 			'homepage'	=> $meta['homepage'],
-		);
+		];
 	}
 
 	public function display_message()
@@ -138,10 +138,10 @@ class country
 		// Display message choosing country
 		if ($this->config['countryflag_message'])
 		{
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'S_COUNTRY_MESSAGE_DISPLAY'	=> true,
 				'COUNTRY_PROFILE_GO_TO'		=> $this->language->lang('COUNTRY_REDIRECT_MSG', '<a href="' . append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info') . '">', '</a>'),
-			));
+			]);
 		}
 	}
 
@@ -163,9 +163,9 @@ class country
 		if (!$this->user->data['is_registered'] || $this->user->data['is_bot'])
 		{
 			$version = $this->get_country_users_cache();
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'COUNTRYFLAG_COPY'	=> $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']),
-			));
+			]);
 		}
 	}
 
@@ -216,15 +216,13 @@ class country
 		if (isset($country[$id]['user_id']))
 		{
 			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-			return array(
+			return [
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
-			);
+			];
 		}
 
-		return array(
-			'image'	=> '',
-		);
+		return ['image'	=> ''];
 	}
 
 	/**
@@ -239,9 +237,9 @@ class country
 	 */
 	public function add_country($event, $country, $on_acp, $on_profile)
 	{
-		$event['data'] = array_merge($event['data'], array(
+		$event['data'] = array_merge($event['data'], [
 			'user_country'	=> $this->request->variable('user_country', $country),
-		));
+		]);
 
 		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 
@@ -249,16 +247,16 @@ class country
 		{
 			if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
 			{
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
-				));
+				]);
 			}
 		}
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
 			'S_COUNTRY_FLAG_ACTIVE'		=> true,
-		));
+		]);
 	}
 
 	/**
@@ -270,7 +268,7 @@ class country
 	 * @return void
 	 * @access private
 	 */
-	private function on_select_flag($flag = '', $on_acp = false, $on_profile = false)
+	private function on_select_flag($flag = '', $on_acp, $on_profile)
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
@@ -278,11 +276,11 @@ class country
 		$select = ($flag == '' && !$this->config['countryflag_default'] && !$on_acp) ? ' selected="selected"' : '';
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
-		$sql = array(
+		$sql = [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
-			'FROM'		=> array($this->countryflag_table => ''),
+			'FROM'		=> [$this->countryflag_table => ''],
 			'ORDER_BY'	=> 'country_' . $sort,
-		);
+		];
 		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -299,12 +297,12 @@ class country
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
 			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
-		));
+		]);
 	}
 
 	/**
@@ -317,7 +315,7 @@ class country
 	 */
 	public function accent_in_country($iso, $country)
 	{
-		if (in_array($iso, array('ae', 'ec', 'eg', 'er', 'et', 'us')))
+		if (in_array($iso, ['ae', 'ec', 'eg', 'er', 'et', 'us']))
 		{
 			$country = str_replace('E', 'É', $country);
 		}

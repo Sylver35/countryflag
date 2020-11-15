@@ -17,42 +17,42 @@ class countryflag_initial_schema extends \phpbb\db\migration\migration
 
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v32x\v325');
+		return ['\phpbb\db\migration\data\v32x\v325'];
 	}
 
 	public function update_schema()
 	{
-		return array(
-			'add_columns'	=> array(
-				$this->table_prefix . 'users'	=> array(
-					'user_country'	=> array('VCHAR:2', '0'),
-				),
-			),
-			'add_tables'	=> array(
-				$this->table_prefix . 'countryflag' => array(
-					'COLUMNS' => array(
-						'id'			=> array('UINT', null, 'auto_increment'),
-						'code_iso'		=> array('VCHAR:2', ''),
-						'country_en'	=> array('VCHAR:255', ''),
-						'country_fr'	=> array('VCHAR:255', ''),
+		return [
+			'add_columns'	=> [
+				$this->table_prefix . 'users'	=> [
+					'user_country'	=> ['VCHAR:2', '0'],
+				],
+			],
+			'add_tables'	=> [
+				$this->table_prefix . 'countryflag' => [
+					'COLUMNS' => [
+						'id'			=> ['UINT', null, 'auto_increment'],
+						'code_iso'		=> ['VCHAR:2', ''],
+						'country_en'	=> ['VCHAR:255', ''],
+						'country_fr'	=> ['VCHAR:255', ''],
 					),
-					'PRIMARY_KEY'	=> array('id'),
-				),
-			),
-		);
+					'PRIMARY_KEY'	=> ['id'],
+				],
+			],
+		];
 	}
 
 	public function revert_schema()
 	{
-		return array(
-			'drop_columns'	=> array(
-				$this->table_prefix . 'users'	=> array(
+		return [
+			'drop_columns'	=> [
+				$this->table_prefix . 'users'	=> [
 					'user_country',
-				),
-			),
-			'drop_tables'	=> array(
+				],
+			],
+			'drop_tables'	=> [
 				$this->table_prefix . 'countryflag',
-			),
-		);
+			],
+		];
 	}
 }

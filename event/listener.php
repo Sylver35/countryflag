@@ -69,7 +69,7 @@ class listener implements EventSubscriberInterface
 	 */
 	static public function getSubscribedEvents()
 	{
-		return array(
+		return [
 			'core.user_setup' 									=> 'load_countryflag',
 			'core.page_header_after'							=> 'page_header_after',
 			'core.modify_username_string' 						=> 'modify_username_string_flag',
@@ -89,7 +89,7 @@ class listener implements EventSubscriberInterface
 			'core.acp_users_modify_profile'						=> 'acp_user_country_profile',
 			'core.acp_users_profile_modify_sql_ary'				=> 'user_profile_sql_ary',
 			'core.acp_users_profile_validate'					=> 'destroy_cache_country_users',
-		);
+		];
 	}
 
 	/**
@@ -183,9 +183,9 @@ class listener implements EventSubscriberInterface
 	 */
 	public function user_profile_sql_ary($event)
 	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], array(
+		$event['sql_ary'] = array_merge($event['sql_ary'], [
 			'user_country'	=> $event['data']['user_country'],
-		));
+		]);
 	}
 
 	/**
@@ -222,15 +222,15 @@ class listener implements EventSubscriberInterface
 			if ($flag['image'] !== '')
 			{
 				$img_anim = true;
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-				));
+				]);
 			}
 		}
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		));
+		]);
 	}
 
 	/**
@@ -247,15 +247,15 @@ class listener implements EventSubscriberInterface
 			if ($flag['image'] !== '')
 			{
 				$img_anim = true;
-				$event['post_row'] = array_merge($event['post_row'], array(
+				$event['post_row'] = array_merge($event['post_row'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-				));
+				]);
 			}
 		}
-		$event['post_row'] = array_merge($event['post_row'], array(
+		$event['post_row'] = array_merge($event['post_row'], [
 			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		));
+		]);
 	}
 
 	/**
@@ -272,15 +272,15 @@ class listener implements EventSubscriberInterface
 			if ($flag['image'] !== '')
 			{
 				$img_anim = true;
-				$event['msg_data'] = array_merge($event['msg_data'], array(
+				$event['msg_data'] = array_merge($event['msg_data'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-				));
+				]);
 			}
 		}
-		$event['msg_data'] = array_merge($event['msg_data'], array(
+		$event['msg_data'] = array_merge($event['msg_data'], [
 			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		));
+		]);
 	}
 
 	/**
@@ -290,9 +290,9 @@ class listener implements EventSubscriberInterface
 	 */
 	public function viewtopic_cache_user_data($event)
 	{
-		$event['user_cache_data'] = array_merge($event['user_cache_data'], array(
+		$event['user_cache_data'] = array_merge($event['user_cache_data'], [
 			'user_id' => $event['row']['user_id'],
-		));
+		]);
 	}
 
 	/**
@@ -302,9 +302,9 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_user_row_after($event)
 	{
-		$event['user_row'] = array_merge($event['user_row'], array(
+		$event['user_row'] = array_merge($event['user_row'], [
 			'user_country'	=> $this->request->variable('user_country', ''),
-		));
+		]);
 		$this->country->destroy_country_users_cache();
 	}
 
@@ -315,9 +315,9 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_register_agreement_country($event)
 	{
-		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], array(
+		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], [
 			'user_country'	=> $this->request->variable('user_country', ''),
-		));
+		]);
 	}
 
 	/**
@@ -333,17 +333,17 @@ class listener implements EventSubscriberInterface
 		$defaut = $this->config['countryflag_position'] ? 'left' : 'right';
 		$username = '<span style="color: #' . $this->user->data['user_colour'] . ';font-weight: bold;">' . $this->user->data['username'] . '</span>';
 
-		$event['data'] = array_merge($event['data'], array(
+		$event['data'] = array_merge($event['data'], [
 			'user_country_sort'	=> $this->request->variable('user_country_sort', $choice),
-		));
+		]);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'COUNTRY_SELECT'	=> $this->country->ucp_sort_select((int) $event['data']['user_country_sort']),
 			'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $country, $country, $defaut),
 			'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $country, $country, 'left'),
 			'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $country, $country, 'right'),
 			'COUNTRY_CHOICE'	=> $choice,
-		));
+		]);
 	}
 
 	/**
@@ -354,8 +354,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_prefs_personal_update_data($event)
 	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], array(
+		$event['sql_ary'] = array_merge($event['sql_ary'], [
 			'user_country_sort'	=> $event['data']['user_country_sort'],
-		));
+		]);
 	}
 }
