@@ -241,7 +241,7 @@ class country
 	 * @return void
 	 * @access public
 	 */
-	public function add_country($event, $country, $on_acp, $on_profile)
+	public function add_country($event, $on_acp, $on_profile)
 	{
 		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 

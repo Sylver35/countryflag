@@ -154,9 +154,9 @@ class listener implements EventSubscriberInterface
 	public function user_country_profile($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $country),
+			'user_country'	=> $this->request->variable('user_country', $this->user->data['user_country']),
 		]);
-		$this->country->add_country($event, $this->user->data['user_country'], false, true);
+		$this->country->add_country($event, false, true);
 	}
 
 	/**
@@ -167,9 +167,9 @@ class listener implements EventSubscriberInterface
 	public function user_country_profile_register($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $country),
+			'user_country'	=> $this->request->variable('user_country', $this->user->data['user_country']),
 		]);
-		$this->country->add_country($event, $this->user->data['user_country'], false, false);
+		$this->country->add_country($event, false, false);
 	}
 
 	/**
@@ -180,9 +180,9 @@ class listener implements EventSubscriberInterface
 	public function acp_user_country_profile($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $country),
+			'user_country'	=> $this->request->variable('user_country', $event['user_row']['user_country']),
 		]);
-		$this->country->add_country($event, $event['user_row']['user_country'], true, false);
+		$this->country->add_country($event, true, false);
 	}
 
 	/**
