@@ -243,15 +243,11 @@ class country
 	 */
 	public function add_country($event, $country, $on_acp, $on_profile)
 	{
-		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $country),
-		]);
-
 		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 
 		$this->template->assign_vars([
-			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
 			'ERROR_COUNTRY'				=> (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required']) ? $this->language->lang('COUNTRY_ERROR') : '',
+			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
 			'S_COUNTRY_FLAG_ACTIVE'		=> true,
 		]);
 	}
