@@ -171,6 +171,25 @@ class country
 
 	public function get_country_img($username, $iso, $country, $pos = 'none')
 	{
+		$position = $this->get_position($pos);
+		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
+
+		if ($position)
+		{
+			// Display the flag before username
+			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
+		}
+		else
+		{
+			// Display the flag after username
+			$username = $username . $this->language->lang('COUNTRYFLAG_SEPARATE') . $flag;
+		}
+
+		return $username;
+	}
+
+	private function get_position($pos)
+	{
 		$position = (bool) $this->config['countryflag_position'];
 		if ($pos === 'none')
 		{
@@ -187,20 +206,7 @@ class country
 			$position = ($pos === 'left') ? true : false;
 		}
 
-		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
-
-		if ($position)
-		{
-			// Display the flag before username
-			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
-		}
-		else
-		{
-			// Display the flag after username
-			$username = $username . $this->language->lang('COUNTRYFLAG_SEPARATE') . $flag;
-		}
-
-		return $username;
+		return $position;
 	}
 
 	/**
