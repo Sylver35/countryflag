@@ -249,15 +249,9 @@ class country
 
 		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 
-		if (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required'])
-		{
-			$this->template->assign_vars([
-				'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
-			]);
-		}
-
 		$this->template->assign_vars([
 			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
+			'ERROR_COUNTRY'				=> (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required']) ? $this->language->lang('COUNTRY_ERROR') : '',
 			'S_COUNTRY_FLAG_ACTIVE'		=> true,
 		]);
 	}
