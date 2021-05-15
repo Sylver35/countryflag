@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Breizh Country Flag Extension for phpBB. Allows users to enter their Country and display the flag wherever possible with the username",
     "homepage": "https://breizhcode.com",
-    "version": "1.5.0",
-    "time": "2020-03-17",
+    "version": "1.6.0",
+    "time": "2021-05-15",
     "keywords": ["phpbb", "extension", "country", "flag", "user", "breizh"],
     "license": "GPL-2.0-only",
     "authors": [{
@@ -14,14 +14,14 @@
             "role": "Developer"
         }],
     "require": {
-        "php": ">=5.4",
+        "php": ">=7.1.3",
         "composer/installers": "~1.0.0",
-        "phpbb/phpbb": ">=3.2.9"
+        "phpbb/phpbb": ">=3.3.4"
     },
     "extra": {
         "display-name": "Breizh Country Flag",
         "soft-require": {
-            "phpbb/phpbb": "3.2.9"
+            "phpbb/phpbb": "3.3.4"
         },
         "version-check": {
             "host": "versions.breizhcode.com",
