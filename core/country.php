@@ -243,14 +243,11 @@ class country
 
 		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
 
-		if (!$on_acp)
+		if (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required'])
 		{
-			if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
-			{
-				$this->template->assign_vars([
-					'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
-				]);
-			}
+			$this->template->assign_vars([
+				'ERROR_COUNTRY'		=> $this->language->lang('COUNTRY_ERROR'),
+			]);
 		}
 
 		$this->template->assign_vars([
