@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2018-2020 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2021 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -92,10 +92,10 @@ class country
 		$this->language->add_lang('countryflag', 'sylver35/countryflag');
 		if ($this->cache->get('_country_users') === false)
 		{
-			$countries = [];
-			$countries[0] = $this->get_version();
-			$sql_ary = [
-				'SELECT'	=> 'u.user_id, u.user_country, c.*',
+			$data = [];
+			$data[0] = $this->get_version();
+			$sql_ary = $this->db->sql_build_query('SELECT', [
+				'SELECT'	=> 'u.user_id, u.user_country, c.code_iso, c.country_en, c.country_fr',
 				'FROM'		=> [USERS_TABLE => 'u'],
 				'LEFT_JOIN'	=> [
 					[
@@ -103,13 +103,13 @@ class country
 						'ON'	=> 'c.code_iso = u.user_country',
 					],
 				],
-				'WHERE'		=> "u.user_type <> 2 AND u.user_country <> '0'",
+				'WHERE'		=> 'u.user_type <> ' . USER_IGNORE . " AND u.user_country <> '0'",
 				'ORDER_BY'	=> 'u.user_id ASC',
-			];
-			$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
+			]);
+			$result = $this->db->sql_query($sql_ary);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$countries[$row['user_id']] = [
+				$data[$row['user_id']] = [
 					'user_id'		=> $row['user_id'],
 					'code_iso'		=> $row['code_iso'],
 					'country_en'	=> $row['country_en'],
@@ -118,7 +118,7 @@ class country
 			}
 			$this->db->sql_freeresult($result);
 			// cache for 7 days
-			$this->cache->put('_country_users', $countries, 604800);
+			$this->cache->put('_country_users', $data, 604800);
 		}
 	}
 
@@ -151,7 +151,7 @@ class country
 		if ($this->config['countryflag_redirect'])
 		{
 			$page_name = substr($this->user->page['page_name'], 0, strpos($this->user->page['page_name'], '.'));
-			if ($page_name != 'ucp' && $page_name != 'posting')
+			if ($page_name != 'ucp')
 			{
 				redirect(append_sid("{$this->root_path}ucp.{$this->php_ext}", 'i=ucp_profile&amp;mode=profile_info'));
 			}
@@ -169,10 +169,10 @@ class country
 		}
 	}
 
-	public function get_country_img($username, $iso, $country, $force = 'none')
+	public function get_country_img($username, $iso, $country, $pos = 'none')
 	{
 		$position = (bool) $this->config['countryflag_position'];
-		if ($force === 'none')
+		if ($pos === 'none')
 		{
 			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 			{
@@ -184,7 +184,7 @@ class country
 		}
 		else
 		{
-			$position = ($force === 'left') ? true : false;
+			$position = ($pos === 'left') ? true : false;
 		}
 
 		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
@@ -276,18 +276,18 @@ class country
 		$select = ($flag == '' && !$this->config['countryflag_default'] && !$on_acp) ? ' selected="selected"' : '';
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
-		$sql = [
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
 			'FROM'		=> [$this->countryflag_table => ''],
 			'ORDER_BY'	=> 'country_' . $sort,
-		];
-		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
+		]);
+		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] == $flag || !$flag && ($row['code_iso'] == $this->config['countryflag_default']) && !$on_acp && !$on_profile)
+			if ($row['code_iso'] === $flag || !$flag && ($row['code_iso'] === $this->config['countryflag_default']) && !$on_acp && !$on_profile)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;

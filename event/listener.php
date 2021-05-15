@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2018-2020 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2021 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -67,7 +67,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @return array Array with the subscribed events
 	 */
-	static public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
 		return [
 			'core.user_setup' 									=> 'load_countryflag',
@@ -81,7 +81,7 @@ class listener implements EventSubscriberInterface
 			'core.ucp_profile_validate_profile_info'			=> 'user_profile_validate',
 			'core.ucp_profile_info_modify_sql_ary'				=> 'user_profile_sql_ary',
 			'core.ucp_register_data_before'						=> 'user_country_profile_register',
-			'core.ucp_register_data_after'						=> 'user_profile_validate',
+			'core.ucp_register_data_after'						=> 'user_register_validate',
 			'core.ucp_register_user_row_after'					=> 'ucp_register_user_row_after',
 			'core.ucp_register_agreement_modify_template_data' 	=> 'ucp_register_agreement_country',
 			'core.ucp_prefs_personal_data'						=> 'ucp_prefs_personal_data',
@@ -125,15 +125,15 @@ class listener implements EventSubscriberInterface
 	 */
 	public function modify_username_string_flag($event)
 	{
-		if ($event['mode'] == 'full' || $event['mode'] == 'no_profile')
+		if ($event['mode'] === 'full' || $event['mode'] === 'no_profile')
 		{
 			// Get the country users from cache
-			$country = $this->country->get_country_users_cache();
+			$data = $this->country->get_country_users_cache();
 			// Do this just for users who have country
-			if (isset($country[$event['user_id']]['user_id']))
+			if (isset($data[$event['user_id']]['user_id']))
 			{
 				$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-				$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]["country_{$lang}"]);
+				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$event['user_id']]['code_iso'], $data[$event['user_id']]["country_{$lang}"]);
 			}
 		}
 	}
@@ -197,11 +197,31 @@ class listener implements EventSubscriberInterface
 	{
 		if ($event['submit'] && empty($event['data']['user_country']) && $this->config['countryflag_required'])
 		{
-			$array = $event['error'];
-			$array[] = $this->language->lang('COUNTRY_ERROR_REGISTER');
-			$event['error'] = $array;
+			$error = $event['error'];
+			$error[] = $this->language->lang('COUNTRY_ERROR');
+			$event['error'] = $error;
 		}
-		if ($event['submit'])
+		else if ($event['submit'])
+		{
+			// Refresh the country users cache now
+			$this->country->destroy_country_users_cache();
+		}
+	}
+
+	/**
+	 * Validate country in register form
+	 *
+	 * @param array $event
+	 */
+	public function user_register_validate($event)
+	{
+		if ($event['submit'] && empty($event['data']['user_country']) && $this->config['countryflag_required'])
+		{
+			$error = $event['error'];
+			$error[] = $this->language->lang('COUNTRY_ERROR_REGISTER');
+			$event['error'] = $error;
+		}
+		else if ($event['submit'])
 		{
 			// Refresh the country users cache now
 			$this->country->destroy_country_users_cache();
@@ -215,22 +235,18 @@ class listener implements EventSubscriberInterface
 	 */
 	public function memberlist_view_profile_img_anim($event)
 	{
-		$img_anim = false;
 		if ($this->config['countryflag_display_memberlist'] && isset($event['member']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['member']['user_id']);
 			if ($flag['image'] !== '')
 			{
-				$img_anim = true;
 				$this->template->assign_vars([
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
+					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
-		$this->template->assign_vars([
-			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		]);
 	}
 
 	/**
@@ -240,22 +256,18 @@ class listener implements EventSubscriberInterface
 	 */
 	public function viewtopic_post_row_img_anim($event)
 	{
-		$img_anim = false;
 		if ($this->config['countryflag_display_topic'] && isset($event['user_poster_data']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
 			if ($flag['image'] !== '')
 			{
-				$img_anim = true;
 				$event['post_row'] = array_merge($event['post_row'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
+					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
-		$event['post_row'] = array_merge($event['post_row'], [
-			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		]);
 	}
 
 	/**
@@ -265,22 +277,18 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_pm_view_messsage($event)
 	{
-		$img_anim = false;
 		if ($this->config['countryflag_display_pm'] && isset($event['user_info']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
 			if ($flag['image'] !== '')
 			{
-				$img_anim = true;
 				$event['msg_data'] = array_merge($event['msg_data'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
+					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
-		$event['msg_data'] = array_merge($event['msg_data'], [
-			'S_COUNTRY_IMG_ANIM'	=> $img_anim,
-		]);
 	}
 
 	/**
@@ -328,22 +336,22 @@ class listener implements EventSubscriberInterface
 	 */
 	public function ucp_prefs_personal_data($event)
 	{
-		$country = $this->user->data['user_country'];
-		$choice = $this->user->data['user_country_sort'];
-		$defaut = $this->config['countryflag_position'] ? 'left' : 'right';
-		$username = '<span style="color: #' . $this->user->data['user_colour'] . ';font-weight: bold;">' . $this->user->data['username'] . '</span>';
+		if ($data = $this->user->data['user_country'])
+		{
+			$username = '<span class="username-coloured" style="color: #' . $this->user->data['user_colour'] . ';">' . $this->user->data['username'] . '</span>';
 
-		$event['data'] = array_merge($event['data'], [
-			'user_country_sort'	=> $this->request->variable('user_country_sort', $choice),
-		]);
+			$event['data'] = array_merge($event['data'], [
+				'user_country_sort'	=> $this->request->variable('user_country_sort', $this->user->data['user_country_sort']),
+			]);
 
-		$this->template->assign_vars([
-			'COUNTRY_SELECT'	=> $this->country->ucp_sort_select((int) $event['data']['user_country_sort']),
-			'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $country, $country, $defaut),
-			'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $country, $country, 'left'),
-			'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $country, $country, 'right'),
-			'COUNTRY_CHOICE'	=> $choice,
-		]);
+			$this->template->assign_vars([
+				'COUNTRY_SELECT'	=> $this->country->ucp_sort_select((int) $event['data']['user_country_sort']),
+				'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $data, $data, ($this->config['countryflag_position'] ? 'left' : 'right')),
+				'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $data, $data, 'left'),
+				'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $data, $data, 'right'),
+				'COUNTRY_CHOICE'	=> $this->user->data['user_country_sort'],
+			]);
+		}
 	}
 
 	/**
