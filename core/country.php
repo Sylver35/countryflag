@@ -243,7 +243,14 @@ class country
 	 */
 	public function add_country($event, $on_acp, $on_profile)
 	{
-		$this->on_select_flag($event['data']['user_country'], $on_acp, $on_profile);
+		if (!$on_acp)
+		{
+			$this->on_select_flag($event['data']['user_country'], $on_profile);
+		}
+		else
+		{
+			$this->on_select_flag_acp($event['data']['user_country']);
+		}
 
 		$this->template->assign_vars([
 			'ERROR_COUNTRY'				=> (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required']) ? $this->language->lang('COUNTRY_ERROR') : '',
@@ -256,19 +263,17 @@ class country
 	 * Build select country flag
 	 *
 	 * @param string $flag
-	 * @param bool $on_acp
 	 * @param bool $on_profile
 	 * @return void
 	 * @access private
 	 */
-	private function on_select_flag($flag = '', $on_acp, $on_profile)
+	private function on_select_flag($flag, $on_profile)
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-		$select = ($flag == '' && !$this->config['countryflag_default'] && !$on_acp) ? ' selected="selected"' : '';
 
-		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
+		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
 			'FROM'		=> [$this->countryflag_table => ''],
@@ -280,7 +285,50 @@ class country
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] === $flag || !$flag && ($row['code_iso'] === $this->config['countryflag_default']) && !$on_acp && !$on_profile)
+			if ($row['code_iso'] === $flag || !$flag && ($row['code_iso'] === $this->config['countryflag_default']) && !$on_profile)
+			{
+				$selected = ' selected="selected"';
+				$title = $country;
+				$flag_image = $row['code_iso'];
+			}
+			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
+			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_TITLE'		=> $title,
+			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
+		]);
+	}
+
+	/**
+	 * Build select country flag in acp
+	 *
+	 * @param string $flag
+	 * @return void
+	 * @access private
+	 */
+	private function on_select_flag_acp($flag)
+	{
+		$flag_image = '0';
+		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
+		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+
+		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'id, code_iso, country_en, country_fr',
+			'FROM'		=> [$this->countryflag_table => ''],
+			'ORDER_BY'	=> 'country_' . $sort,
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$selected = '';
+			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
+			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
+			if ($row['code_iso'] === $flag)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;

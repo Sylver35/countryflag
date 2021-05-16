@@ -167,7 +167,7 @@ class listener implements EventSubscriberInterface
 	public function user_country_profile_register($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $this->user->data['user_country']),
+			'user_country'	=> $this->request->variable('user_country', ''),
 		]);
 		$this->country->add_country($event, false, false);
 	}
