@@ -132,6 +132,18 @@ class country
 			'homepage'	=> $meta['homepage'],
 		];
 	}
+	
+	public function get_lang()
+	{
+		if ($this->language->lang('USER_LANG') === 'fr')
+		{
+			return 'fr';
+		}
+		else
+		{
+			return 'en';
+		}
+	}
 
 	public function display_message()
 	{
@@ -171,10 +183,9 @@ class country
 
 	public function get_country_img($username, $iso, $country, $pos = 'none')
 	{
-		$position = $this->get_position($pos);
 		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
-		if ($position)
+		if ($this->get_position($pos))
 		{
 			// Display the flag before username
 			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
@@ -193,12 +204,9 @@ class country
 		$position = (bool) $this->config['countryflag_position'];
 		if ($pos === 'none')
 		{
-			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
+			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && ((int) $this->user->data['user_country_sort'] !== 0))
 			{
-				if ((int) $this->user->data['user_country_sort'] !== 0)
-				{
-					$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
-				}
+				$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
 			}
 		}
 		else
@@ -218,17 +226,20 @@ class country
 	 */
 	public function get_country_img_anim($id)
 	{
+		$img = [
+			'image'	=> '',
+		];
 		$country = $this->cache->get('_country_users');
 		if (isset($country[$id]['user_id']))
 		{
-			$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
-			return [
+			$lang = $this->get_lang();
+			$img = [
 				'image'		=> sprintf($this->config['countryflag_img_anim'], $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
 			];
 		}
 
-		return ['image'	=> ''];
+		return $img;
 	}
 
 	/**
@@ -271,7 +282,7 @@ class country
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
-		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+		$sort = $this->get_lang();
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -314,7 +325,7 @@ class country
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
-		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+		$sort = $this->get_lang();
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = $this->db->sql_build_query('SELECT', [

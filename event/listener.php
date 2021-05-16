@@ -129,10 +129,10 @@ class listener implements EventSubscriberInterface
 		{
 			// Get the country users from cache
 			$data = $this->country->get_country_users_cache();
-			// Do this just for users who have country
+			// Do this just for users who have selected country
 			if (isset($data[$event['user_id']]['user_id']))
 			{
-				$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+				$lang = $this->country->get_lang();
 				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$event['user_id']]['code_iso'], $data[$event['user_id']]["country_{$lang}"]);
 			}
 		}
