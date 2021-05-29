@@ -70,7 +70,7 @@ class listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
-			'core.user_setup' 									=> 'load_countryflag',
+			'core.user_setup' 									=> 'load_language_on_setup',
 			'core.page_header_after'							=> 'page_header_after',
 			'core.modify_username_string' 						=> 'modify_username_string_flag',
 			'core.memberlist_view_profile'						=> 'memberlist_view_profile_img_anim',
@@ -93,10 +93,17 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Cache country users if needed
+	 * @param array $event
 	 */
-	public function load_countryflag()
+	public function load_language_on_setup($event)
 	{
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = [
+			'ext_name' => 'sylver35/countryflag',
+			'lang_set' => 'countryflag',
+		];
+		$event['lang_set_ext'] = $lang_set_ext;
+
 		$this->country->cache_country_users();
 	}
 

@@ -8,6 +8,7 @@
  */
 
 namespace sylver35\countryflag\controller;
+
 use sylver35\countryflag\core\country;
 use phpbb\config\config;
 use phpbb\request\request;
@@ -118,7 +119,7 @@ class controller
 	private function config_select_flag()
 	{
 		$flag_image = '0';
-		$sort = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+		$sort = $this->country->get_lang();
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
@@ -126,7 +127,7 @@ class controller
 		$sql = [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
 			'FROM'		=> [$this->countryflag_table => ''],
-			'ORDER_BY'	=> "country_{$sort}",
+			'ORDER_BY'	=> 'country_' . $sort,
 		];
 		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
 		while ($row = $this->db->sql_fetchrow($result))

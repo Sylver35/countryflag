@@ -89,7 +89,6 @@ class country
 
 	public function cache_country_users()
 	{
-		$this->language->add_lang('countryflag', 'sylver35/countryflag');
 		if ($this->cache->get('_country_users') === false)
 		{
 			$data = [];
@@ -132,10 +131,10 @@ class country
 			'homepage'	=> $meta['homepage'],
 		];
 	}
-	
+
 	public function get_lang()
 	{
-		if ($this->language->lang('USER_LANG') === 'fr')
+		if ($this->user->lang_name === 'fr')
 		{
 			return 'fr';
 		}
@@ -204,7 +203,7 @@ class country
 		$position = (bool) $this->config['countryflag_position'];
 		if ($pos === 'none')
 		{
-			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && ((int) $this->user->data['user_country_sort'] !== 0))
+			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && $this->user->data['user_country_sort'])
 			{
 				$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
 			}
@@ -227,7 +226,8 @@ class country
 	public function get_country_img_anim($id)
 	{
 		$img = [
-			'image'	=> '',
+			'image'		=> '',
+			'country'	=> '',
 		];
 		$country = $this->cache->get('_country_users');
 		if (isset($country[$id]['user_id']))
@@ -296,7 +296,7 @@ class country
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] === $flag || !$flag && ($row['code_iso'] === $this->config['countryflag_default']) && !$on_profile)
+			if ($row['code_iso'] === $flag || ($row['code_iso'] === $this->config['countryflag_default']) && !$flag && !$on_profile)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
