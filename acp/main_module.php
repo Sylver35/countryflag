@@ -19,7 +19,7 @@ class main_module
 	/** @var string */
 	public $tpl_name;
 
-	public function main(/** @scrutinizer ignore-unused */$id, $mode)
+	public function main()
 	{
 		global $phpbb_container;
 
