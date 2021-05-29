@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2018-2020 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2021 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -36,15 +36,10 @@ class main_module
 		$this->tpl_name = 'acp_countryflag';
 		$this->page_title = $language->lang('COUNTRYFLAG_TITLE');
 
-		switch ($mode)
-		{
-			case 'config':
-				$admin_controller->acp_config_countryflag();
+		$admin_controller->acp_config_countryflag();
 
-				$template->assign_vars(array(
-					'U_ACTION'			=> $this->u_action,
-				));
-			break;
-		}
+		$template->assign_vars(array(
+			'U_ACTION'	=> $this->u_action,
+		));
 	}
 }

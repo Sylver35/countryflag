@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2018-2020 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2021 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -12,16 +12,16 @@ class main_info
 {
 	public function module()
 	{
-		return array(
+		return [
 			'filename'	=> '\sylver35\countryflag\acp\main_module',
 			'title'		=> 'ACP_COUNTRYFLAG_MODULE',
-			'modes'		=> array(
-				'config'		=> array(
+			'modes'		=> [
+				'config'		=> [
 					'title'	=> 'ACP_COUNTRYFLAG_CONFIG',
 					'auth'	=> 'ext_sylver35/countryflag && acl_a_board',
-					'cat'	=> array('ACP_COUNTRYFLAG_MODULE'),
-				),
-			),
-		);
+					'cat'	=> ['ACP_COUNTRYFLAG_MODULE'],
+				],
+			],
+		];
 	}
 }

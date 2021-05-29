@@ -134,7 +134,7 @@ class country
 
 	public function get_lang()
 	{
-		if ($this->user->lang_name === 'fr')
+		if ($this->user->lang_name == 'fr')
 		{
 			return 'fr';
 		}
