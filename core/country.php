@@ -91,8 +91,9 @@ class country
 	{
 		if ($this->cache->get('_country_users') === false)
 		{
-			$data = [];
-			$data[0] = $this->get_version();
+			$data = [
+				0	=> $this->get_version(),
+			];
 			$sql_ary = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'u.user_id, u.user_country, c.code_iso, c.country_en, c.country_fr',
 				'FROM'		=> [USERS_TABLE => 'u'],
@@ -182,7 +183,7 @@ class country
 
 	public function get_country_img($username, $iso, $country, $pos = 'none')
 	{
-		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
+		$flag = sprintf(str_replace('\\', '', $this->config['countryflag_img']), $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
 		if ($this->get_position($pos))
 		{
@@ -234,7 +235,7 @@ class country
 		{
 			$lang = $this->get_lang();
 			$img = [
-				'image'		=> sprintf($this->config['countryflag_img_anim'], $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
+				'image'		=> sprintf(str_replace('\\', '', $this->config['countryflag_img_anim']), $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
 			];
 		}
