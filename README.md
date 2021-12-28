@@ -14,7 +14,7 @@
 
 ## Uninstall
 1. Navigate in the ACP to `Customise -> Extension Management -> Extensions`.
-2. Look for `Breizh Preview Message` under the Enabled Extensions list, and click its `Disable` link.
+2. Look for `Breizh Country Flag` under the Enabled Extensions list, and click its `Disable` link.
 3. To permanently uninstall, click `Delete Data` and then delete the `/ext/sylver35/countryflag` folder.
 
 ## License
