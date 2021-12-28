@@ -10,7 +10,7 @@
 3. In the `ext` directory of your phpBB board, create a new directory named `sylver35` (if it does not already exist).
 4. Copy the `countryflag` folder to `/ext/sylver35/` (if done correctly, you'll have the main extension class at (your forum root)/ext/sylver35/countryflag/composer.json).
 5. Navigate in the ACP to `Customise -> Manage extensions`.
-6. Look for `Breizh Preview Message` under the Disabled Extensions list, and click its `Enable` link.
+6. Look for `Breizh Country Flag` under the Disabled Extensions list, and click its `Enable` link.
 
 ## Uninstall
 1. Navigate in the ACP to `Customise -> Extension Management -> Extensions`.
