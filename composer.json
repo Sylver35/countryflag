@@ -5,14 +5,23 @@
     "homepage": "https://breizhcode.com",
     "version": "1.6.0",
     "time": "2021-05-15",
-    "keywords": ["phpbb", "extension", "country", "flag", "user", "breizh"],
+    "keywords": [
+        "phpbb",
+        "extension",
+        "country",
+        "flag",
+        "user",
+        "breizh"
+    ],
     "license": "GPL-2.0-only",
-    "authors": [{
+    "authors": [
+        {
             "name": "Sylver35",
             "email": "webmaster@breizhcode.com",
             "homepage": "https://breizhcode.com",
             "role": "Developer"
-        }],
+        }
+    ],
     "require": {
         "php": ">=7.1.3",
         "composer/installers": "~1.0.0",
@@ -24,9 +33,10 @@
             "phpbb/phpbb": "3.3.4"
         },
         "version-check": {
-            "host": "versions.breizhcode.com",
-            "directory": "/countryflag",
-            "filename": "/version_check.json"
+            "host": "www.phpbb-fr.com",
+            "directory": "/customise/db/extension/countryflag",
+            "filename": "version_check",
+            "ssl": true
         }
     }
 }

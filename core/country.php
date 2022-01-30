@@ -89,11 +89,11 @@ class country
 
 	public function cache_country_users()
 	{
+		$this->language->add_lang('countryflag', 'sylver35/countryflag');
 		if ($this->cache->get('_country_users') === false)
 		{
-			$data = [
-				0	=> $this->get_version(),
-			];
+			$data = [];
+			$data[0] = $this->get_version();
 			$sql_ary = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'u.user_id, u.user_country, c.code_iso, c.country_en, c.country_fr',
 				'FROM'		=> [USERS_TABLE => 'u'],
@@ -132,10 +132,10 @@ class country
 			'homepage'	=> $meta['homepage'],
 		];
 	}
-
+	
 	public function get_lang()
 	{
-		if ($this->user->lang_name == 'fr')
+		if ($this->language->lang('USER_LANG') === 'fr')
 		{
 			return 'fr';
 		}
@@ -183,7 +183,7 @@ class country
 
 	public function get_country_img($username, $iso, $country, $pos = 'none')
 	{
-		$flag = sprintf($this->clean_img('countryflag_img'), $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
+		$flag = sprintf($this->config['countryflag_img'], $this->ext_path . 'flags/' . $iso . '.png', $country, $country . ' (' . $iso . ')', 'flag-user flag-' . $this->config['countryflag_width'], $this->config['countryflag_width']);
 
 		if ($this->get_position($pos))
 		{
@@ -199,17 +199,12 @@ class country
 		return $username;
 	}
 
-	private function clean_img($img)
-	{
-		return str_replace(['\\', '&quot;', '""'], ['', '"', '"'], $this->config[$img]);
-	}
-
 	private function get_position($pos)
 	{
 		$position = (bool) $this->config['countryflag_position'];
 		if ($pos === 'none')
 		{
-			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && $this->user->data['user_country_sort'])
+			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && ((int) $this->user->data['user_country_sort'] !== 0))
 			{
 				$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
 			}
@@ -232,15 +227,14 @@ class country
 	public function get_country_img_anim($id)
 	{
 		$img = [
-			'image'		=> '',
-			'country'	=> '',
+			'image'	=> '',
 		];
 		$country = $this->cache->get('_country_users');
 		if (isset($country[$id]['user_id']))
 		{
 			$lang = $this->get_lang();
 			$img = [
-				'image'		=> sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
+				'image'		=> sprintf($this->config['countryflag_img_anim'], $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]["country_{$lang}"], $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
 			];
 		}
@@ -302,7 +296,7 @@ class country
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] === $flag || ($row['code_iso'] === $this->config['countryflag_default']) && !$flag && !$on_profile)
+			if ($row['code_iso'] === $flag || !$flag && ($row['code_iso'] === $this->config['countryflag_default']) && !$on_profile)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
