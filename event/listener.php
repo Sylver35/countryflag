@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2021 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2022 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -132,7 +132,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function modify_username_string_flag($event)
 	{
-		if ($event['mode'] === 'full' || $event['mode'] === 'no_profile')
+		if ($event['mode'] == 'full' || $event['mode'] == 'no_profile')
 		{
 			// Get the country users from cache
 			$data = $this->country->get_country_users_cache();

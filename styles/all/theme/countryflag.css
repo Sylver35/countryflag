@@ -2,6 +2,10 @@
    By Sylver35  https://breizhcode.com
 ----------------------------------------*/
 
+#user_country_img {
+	vertical-align: middle;
+}
+
 img.flag-user, .notification_list ul li img.flag-user, a.header-avatar img.flag-user, ul li img.flag-user {
 	margin: 0;
 	vertical-align: baseline;
