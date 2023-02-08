@@ -13,7 +13,7 @@
 			<label for="user_country"><strong>{{ lang('COUNTRYFLAG_SORT_FLAG') }}{{ lang('COLON') }}{{ COUNTRY_FLAG_REQUIRED }}</strong></label>
 		</dt>
 		<dd>
-			<select id="user_country" name="user_country" title="{{ COUNTRY_FLAG_TITLE }}" onchange="update_flag(this.options[selectedIndex].value,this.options[selectedIndex].text);">{{ S_COUNTRY_FLAG_OPTIONS }}</select>&nbsp;<img id="user_country_img" src="{{ COUNTRY_FLAG_IMAGE }}" alt="{{ COUNTRY_FLAG_TITLE }}" title="{{ COUNTRY_FLAG_TITLE }}" width="22" style="vertical-align:middle;" />
+			<select id="user_country" name="user_country" title="{{ COUNTRY_FLAG_TITLE }}" onchange="update_flag(this.options[selectedIndex].value,this.options[selectedIndex].text);">{{ S_COUNTRY_FLAG_OPTIONS }}</select>&nbsp;<img id="user_country_img" src="{{ COUNTRY_FLAG_IMAGE }}" alt="{{ COUNTRY_FLAG_TITLE }}" title="{{ COUNTRY_FLAG_TITLE }}" width="22" style="vertical-align:middle;">
 		</dd>
 	</dl>
 {% endif %}

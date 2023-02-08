@@ -88,7 +88,7 @@ class listener implements EventSubscriberInterface
 			'core.ucp_prefs_personal_update_data'				=> 'ucp_prefs_personal_update_data',
 			'core.acp_users_modify_profile'						=> 'acp_user_country_profile',
 			'core.acp_users_profile_modify_sql_ary'				=> 'user_profile_sql_ary',
-			'core.acp_users_profile_validate'					=> 'destroy_cache_country_users',
+			'core.acp_users_profile_validate'					=> 'destroy_cache',
 		];
 	}
 
@@ -148,7 +148,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Destroy cache country users after validate profile
 	 */
-	public function destroy_cache_country_users()
+	public function destroy_cache()
 	{
 		$this->country->destroy_country_users_cache();
 	}
@@ -217,11 +217,6 @@ class listener implements EventSubscriberInterface
 			$error[] = $this->language->lang('COUNTRY_ERROR');
 			$event['error'] = $error;
 		}
-		else if ($event['submit'])
-		{
-			// Refresh the country users cache now
-			$this->country->destroy_country_users_cache();
-		}
 	}
 
 	/**
@@ -236,11 +231,6 @@ class listener implements EventSubscriberInterface
 			$error = $event['error'];
 			$error[] = $this->language->lang('COUNTRY_ERROR_REGISTER');
 			$event['error'] = $error;
-		}
-		else if ($event['submit'])
-		{
-			// Refresh the country users cache now
-			$this->country->destroy_country_users_cache();
 		}
 	}
 
@@ -330,6 +320,7 @@ class listener implements EventSubscriberInterface
 			'user_country'	=> $this->request->variable('user_country', ''),
 		]);
 		$this->country->destroy_country_users_cache();
+		$this->country->cache_country_users();
 	}
 
 	/**
