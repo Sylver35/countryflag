@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2022 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -88,7 +88,7 @@ class listener implements EventSubscriberInterface
 			'core.ucp_prefs_personal_update_data'				=> 'ucp_prefs_personal_update_data',
 			'core.acp_users_modify_profile'						=> 'acp_user_country_profile',
 			'core.acp_users_profile_modify_sql_ary'				=> 'user_profile_sql_ary',
-			'core.acp_users_profile_validate'					=> 'destroy_cache',
+			'core.acp_users_profile_validate'					=> 'destroy_country',
 		];
 	}
 
@@ -148,7 +148,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Destroy cache country users after validate profile
 	 */
-	public function destroy_cache()
+	public function destroy_country()
 	{
 		$this->country->destroy_country_users_cache();
 	}
@@ -217,6 +217,12 @@ class listener implements EventSubscriberInterface
 			$error[] = $this->language->lang('COUNTRY_ERROR');
 			$event['error'] = $error;
 		}
+		else if ($event['submit'])
+		{
+			// Refresh the country users cache now
+			$this->country->destroy_country_users_cache();
+			$this->country->cache_country_users();
+		}
 	}
 
 	/**
@@ -231,6 +237,12 @@ class listener implements EventSubscriberInterface
 			$error = $event['error'];
 			$error[] = $this->language->lang('COUNTRY_ERROR_REGISTER');
 			$event['error'] = $error;
+		}
+		else if ($event['submit'])
+		{
+			// Refresh the country users cache now
+			$this->country->destroy_country_users_cache();
+			$this->country->cache_country_users();
 		}
 	}
 

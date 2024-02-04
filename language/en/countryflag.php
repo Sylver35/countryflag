@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2022 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  * @translator	Sylver35  https://breizhcode.com
  */
@@ -75,7 +75,7 @@ $lang = array_merge($lang, array(
 	'USER_COUNTRYFLAG'				=> 'User country flag',
 	'COUNTRY_ERROR'					=> 'You <b>must</b> select your country flag to continue!',
 	'COUNTRY_ERROR_REGISTER'		=> 'You <b>must</b> select your country flag to complete your registration!',
-	'COUNTRY_REDIRECT_MSG'			=> 'You did not fill in your country flag.<br />Thank you for taking the time to fill it %sOn this page%s.',
+	'COUNTRY_REDIRECT_MSG'			=> 'You did not fill in your country flag.<br/>Thank you for taking the time to fill it %sOn this page%s.',
 	'COUNTRYFLAG_COPY'				=> '<a href="%1$s" onclick="window.open(this.href);return false;" title="Breizh Country Flag">Breizh Country Flag by Sylver35</a> » V %2$s',
-	'LOG_CONFIG_COUNTRYFLAG'		=> '<strong>Changing the flags settings</strong><br /> » Update of the general configuration of the flags of countries',
+	'LOG_CONFIG_COUNTRYFLAG'		=> '<strong>Changing the flags settings</strong><br/> » Update of the general configuration of the flags of countries',
 ));
