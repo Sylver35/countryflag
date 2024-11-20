@@ -1,8 +1,8 @@
 # phpBB Breizh Country Flag Extension
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/quality-score.png?b=1.7.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/?branch=1.7.0)
-[![Build Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/build.png?b=1.7.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/build-status/1.7.0)
-[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/code-intelligence.svg?b=1.7.0)](https://scrutinizer-ci.com/code-intelligence)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/quality-score.png?b=1.8.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/?branch=1.8.0)
+[![Build Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/build.png?b=1.8.0)](https://scrutinizer-ci.com/g/Sylver35/countryflag/build-status/1.8.0)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/countryflag/badges/code-intelligence.svg?b=1.8.0)](https://scrutinizer-ci.com/code-intelligence)
 
 ## Install
 1. Download the latest release.
