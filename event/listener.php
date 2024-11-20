@@ -202,6 +202,9 @@ class listener implements EventSubscriberInterface
 		$event['sql_ary'] = array_merge($event['sql_ary'], [
 			'user_country'	=> $event['data']['user_country'],
 		]);
+		// Refresh the country users cache now
+		$this->country->destroy_country_users_cache();
+		$this->country->cache_country_users();
 	}
 
 	/**
