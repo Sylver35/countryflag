@@ -19,9 +19,9 @@ class countryflag_1_8_0 extends migration
 	
 	public function update_data()
 	{
-		['config.add', ['countryflag_refresh_cache', '0', 1]],
-
 		return [
+			['config.add', ['countryflag_refresh_cache', '0', 1]],
+
 			['custom',
 				[
 					[&$this, 'update_country_flag'],
