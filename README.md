@@ -18,4 +18,7 @@
 3. To permanently uninstall, click `Delete Data` and then delete the `/ext/sylver35/countryflag` folder.
 
 ## License
+
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
+
+© 2024 - Sylver35

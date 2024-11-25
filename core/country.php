@@ -103,7 +103,7 @@ class country
 						'ON'	=> 'c.code_iso = u.user_country',
 					],
 				],
-				'WHERE'		=> 'u.user_type <> ' . USER_IGNORE . " AND u.user_country <> '0'",
+				'WHERE'		=> "u.user_country <> '0'",
 				'ORDER_BY'	=> 'u.user_id ASC',
 			]);
 			$result = $this->db->sql_query($sql_ary);
@@ -117,9 +117,16 @@ class country
 				];
 			}
 			$this->db->sql_freeresult($result);
+
 			// cache for 7 days
 			$this->cache->put('_country_users', $data, 604800);
+			$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
 		}
+	}
+
+	public function update_config_refresh()
+	{
+		$this->config->set_atomic('countryflag_refresh_cache', 0, 1, false);
 	}
 
 	public function get_version()
@@ -135,14 +142,9 @@ class country
 
 	public function get_lang()
 	{
-		if ($this->user->lang_name == 'fr')
-		{
-			return 'fr';
-		}
-		else
-		{
-			return 'en';
-		}
+		$lang_bc = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+
+		return $lang_bc;
 	}
 
 	public function display_message()
@@ -244,13 +246,13 @@ class country
 			$flag_anim = sprintf(
 				$this->clean_img('countryflag_img_anim'),
 				$this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif',
-				$country[$id]["country_{$lang}"],
-				$country[$id]["country_{$lang}"] . ' (' . $country[$id]['code_iso'] . ')',
+				$country[$id]['country_' . $lang],
+				$country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')',
 				$this->config['countryflag_width_anim'],
 			);
 			$img = [
 				'image'		=> $flag_anim,
-				'country'	=> $country[$id]["country_{$lang}"],
+				'country'	=> $country[$id]['country_' . $lang],
 			];
 		}
 
@@ -310,14 +312,14 @@ class country
 		{
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
-			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
+			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if (($row['code_iso'] === $flag) || ($row['code_iso'] === $this->config['countryflag_default']) && !$flag && !$on_profile)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
 				$flag_image = $row['code_iso'];
 			}
-			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
+			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row['country_' . $sort] . "</option>\n";
 		}
 		$this->db->sql_freeresult($result);
 
@@ -353,14 +355,14 @@ class country
 		{
 			$selected = '';
 			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
-			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
+			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if ($row['code_iso'] === $flag)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
 				$flag_image = $row['code_iso'];
 			}
-			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
+			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row['country_' . $sort] . "</option>\n";
 		}
 		$this->db->sql_freeresult($result);
 

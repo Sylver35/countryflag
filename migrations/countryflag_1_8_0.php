@@ -19,6 +19,8 @@ class countryflag_1_8_0 extends migration
 	
 	public function update_data()
 	{
+		['config.add', ['countryflag_refresh_cache', '0', 1]],
+
 		return [
 			['custom',
 				[
@@ -30,11 +32,9 @@ class countryflag_1_8_0 extends migration
 
 	public function update_country_flag()
 	{
-		$sql_ary = [
-			'code_iso'		=> 'gf',
+		$this->db->sql_query('UPDATE ' . $this->table_prefix . 'countryflag SET ' . $this->db->sql_build_array('UPDATE', [
 			'country_en'	=> 'French Guyana',
 			'country_fr'	=> 'Guyane Française',
-		];
-		$this->db->sql_query('INSERT INTO ' . $this->table_prefix . 'countryflag ' . $this->db->sql_build_array('INSERT', $sql_ary));
+		]) . " WHERE code_iso = 'gf'");
 	}
 }

@@ -83,12 +83,13 @@ class listener implements EventSubscriberInterface
 			'core.ucp_register_data_before'						=> 'user_country_profile_register',
 			'core.ucp_register_data_after'						=> 'user_register_validate',
 			'core.ucp_register_user_row_after'					=> 'ucp_register_user_row_after',
+			'core.ucp_register_register_after'					=> 'update_config_refresh',
 			'core.ucp_register_agreement_modify_template_data' 	=> 'ucp_register_agreement_country',
 			'core.ucp_prefs_personal_data'						=> 'ucp_prefs_personal_data',
 			'core.ucp_prefs_personal_update_data'				=> 'ucp_prefs_personal_update_data',
 			'core.acp_users_modify_profile'						=> 'acp_user_country_profile',
 			'core.acp_users_profile_modify_sql_ary'				=> 'user_profile_sql_ary',
-			'core.acp_users_profile_validate'					=> 'destroy_country',
+			'core.acp_users_profile_validate'					=> 'update_config_refresh',
 		];
 	}
 
@@ -103,8 +104,6 @@ class listener implements EventSubscriberInterface
 			'lang_set' => 'countryflag',
 		];
 		$event['lang_set_ext'] = $lang_set_ext;
-
-		$this->country->cache_country_users();
 	}
 
 	/**
@@ -112,6 +111,14 @@ class listener implements EventSubscriberInterface
 	 */
 	public function page_header_after()
 	{
+		// If country users must be updated
+		if ($this->config['countryflag_refresh_cache'])
+		{
+			// Refresh the country users cache now
+			$this->country->destroy_country_users_cache();
+			$this->country->cache_country_users();
+		}
+
 		$this->country->write_version();
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && !$this->user->data['user_country'])
 		{
@@ -140,17 +147,9 @@ class listener implements EventSubscriberInterface
 			if (isset($data[$event['user_id']]['user_id']))
 			{
 				$lang = $this->country->get_lang();
-				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$event['user_id']]['code_iso'], $data[$event['user_id']]["country_{$lang}"]);
+				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$event['user_id']]['code_iso'], $data[$event['user_id']]['country_' . $lang]);
 			}
 		}
-	}
-
-	/**
-	 * Destroy cache country users after validate profile
-	 */
-	public function destroy_country()
-	{
-		$this->country->destroy_country_users_cache();
 	}
 
 	/**
@@ -202,9 +201,6 @@ class listener implements EventSubscriberInterface
 		$event['sql_ary'] = array_merge($event['sql_ary'], [
 			'user_country'	=> $event['data']['user_country'],
 		]);
-		// Refresh the country users cache now
-		$this->country->destroy_country_users_cache();
-		$this->country->cache_country_users();
 	}
 
 	/**
@@ -222,9 +218,8 @@ class listener implements EventSubscriberInterface
 		}
 		else if ($event['submit'])
 		{
-			// Refresh the country users cache now
-			$this->country->destroy_country_users_cache();
-			$this->country->cache_country_users();
+			// Say to refresh the country users cache now
+			$this->country->update_config_refresh();
 		}
 	}
 
@@ -243,9 +238,8 @@ class listener implements EventSubscriberInterface
 		}
 		else if ($event['submit'])
 		{
-			// Refresh the country users cache now
-			$this->country->destroy_country_users_cache();
-			$this->country->cache_country_users();
+			// Say to refresh the country users cache now
+			$this->country->update_config_refresh();
 		}
 	}
 
@@ -334,8 +328,15 @@ class listener implements EventSubscriberInterface
 		$event['user_row'] = array_merge($event['user_row'], [
 			'user_country'	=> $this->request->variable('user_country', ''),
 		]);
-		$this->country->destroy_country_users_cache();
-		$this->country->cache_country_users();
+	}
+
+	/**
+	 * Update cache after add or change country
+	 */
+	public function update_config_refresh()
+	{
+		// Say to refresh the country users cache now
+		$this->country->update_config_refresh();
 	}
 
 	/**
@@ -351,7 +352,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Add user_country_sort in prefs personal data
+	 * Add position of flag in prefs personal data
 	 * Since 1.4.0 version
 	 *
 	 * @param array $event

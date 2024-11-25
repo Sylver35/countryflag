@@ -134,14 +134,14 @@ class controller
 		{
 			$selected = '';
 			$row['country_fr'] = $this->country->accent_in_country($row['code_iso'], $row['country_fr']);
-			$country = $row["country_{$sort}"] . ' (' . $row['code_iso'] . ')';
+			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if ($row['code_iso'] == $this->config['countryflag_default'])
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
 				$flag_image = $row['code_iso'];
 			}
-			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row["country_{$sort}"] . "</option>\n";
+			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row['country_' . $sort] . "</option>\n";
 		}
 		$this->db->sql_freeresult($result);
 
