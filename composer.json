@@ -29,5 +29,10 @@
             "filename": "version_check.json",
             "ssl": false
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
     }
 }
