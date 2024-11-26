@@ -102,6 +102,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
+	 * Automatic refresh the country users cache if needed
 	 * Create URL and display message to user if needed
 	 */
 	public function page_header_after()
@@ -136,13 +137,14 @@ class listener implements EventSubscriberInterface
 	{
 		if ($event['mode'] == 'full' || $event['mode'] == 'no_profile')
 		{
+			$id = $event['user_id'];
 			// Get the country users from cache
 			$data = $this->country->cache_country_users();
 			// Do this just for users who have selected country
-			if (isset($data[$event['user_id']]['user_id']))
+			if (isset($data[$id]['user_id']))
 			{
 				$lang = $this->country->get_lang();
-				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$event['user_id']]['code_iso'], $data[$event['user_id']]['country_' . $lang]);
+				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$id]['code_iso'], $data[$id]['country_' . $lang]);
 			}
 		}
 	}

@@ -129,7 +129,6 @@ class country
 		$this->cache->destroy('_country_users');
 	}
 
-
 	public function get_version()
 	{
 		$md_manager = $this->ext_manager->create_extension_metadata_manager('sylver35/countryflag');
