@@ -10,7 +10,6 @@ namespace sylver35\countryflag\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\countryflag\core\country;
-use phpbb\auth\auth;
 use phpbb\config\config;
 use phpbb\template\template;
 use phpbb\user;
@@ -21,9 +20,6 @@ class listener implements EventSubscriberInterface
 {
 	/* @var \sylver35\countryflag\core\country */
 	protected $country;
-
-	/** @var \phpbb\auth\auth */
-	protected $auth;
 
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -49,10 +45,9 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Listener constructor
 	 */
-	public function __construct(country $country, auth $auth, config $config, template $template, user $user, language $language, request $request, $root_path, $php_ext)
+	public function __construct(country $country, config $config, template $template, user $user, language $language, request $request, $root_path, $php_ext)
 	{
 		$this->country = $country;
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
@@ -119,10 +114,9 @@ class listener implements EventSubscriberInterface
 			$this->country->cache_country_users();
 		}
 
-		$this->country->write_version();
-		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && !$this->user->data['user_country'])
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			if ($this->config['countryflag_required'] && $this->auth->acl_get('u_chgprofileinfo'))
+			if ($this->config['countryflag_required'] && !$this->user->data['user_country'])
 			{
 				// Display message choosing country
 				$this->country->display_message();
@@ -130,6 +124,7 @@ class listener implements EventSubscriberInterface
 				$this->country->redirect_to_profile();
 			}
 		}
+		$this->country->write_version();
 	}
 
 	/**
@@ -142,7 +137,7 @@ class listener implements EventSubscriberInterface
 		if ($event['mode'] == 'full' || $event['mode'] == 'no_profile')
 		{
 			// Get the country users from cache
-			$data = $this->country->get_country_users_cache();
+			$data = $this->country->cache_country_users();
 			// Do this just for users who have selected country
 			if (isset($data[$event['user_id']]['user_id']))
 			{

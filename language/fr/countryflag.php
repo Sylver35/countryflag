@@ -53,7 +53,8 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_SELECT_DEFAULT'	=> 'Réglage sélectionné par défaut',
 	'COUNTRYFLAG_SELECT_BEFORE'		=> 'Avant les noms d’utilisateurs',
 	'COUNTRYFLAG_SELECT_AFTER'		=> 'Après les noms d’utilisateurs',
-	'COUNTRYFLAG_SEPARATE'			=> ' ', // Be careful : only non-breaking space
+	'COUNTRYFLAG_SEPARATE'			=> ' ', // Be careful : only non-breaking space here, don't touch
+	'COUNTRYFLAG_CHGPROFILEINFO'	=> 'Vous n’avez pas la permission de modifier votre profil et ne pouvez donc pas renseigner votre pays.<br>Contactez un administrateur pour y remédier.',
 	'COUNTRYFLAG_BEFORE'			=> 'avant',
 	'COUNTRYFLAG_AFTER'				=> 'après',
 	'COUNTRYFLAG_ACTIVATE'			=> 'activer',
@@ -75,7 +76,7 @@ $lang = array_merge($lang, array(
 	'USER_COUNTRYFLAG'				=> 'Drapeau du pays de l’utilisateur',
 	'COUNTRY_ERROR'					=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour pouvoir continuer !',
 	'COUNTRY_ERROR_REGISTER'		=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour finaliser votre inscription !',
-	'COUNTRY_REDIRECT_MSG'			=> 'Vous n’avez pas renseigné le drapeau de votre pays.<br/>Merci de bien vouloir prendre le temps de le renseigner %sSur cette page%s. ',
+	'COUNTRY_REDIRECT_MSG'			=> 'Vous n’avez pas renseigné le drapeau de votre pays.<br/>Merci de bien vouloir prendre le temps de le renseigner %sSur cette page%s pour pouvoir continuer votre navigation. ',
 	'COUNTRYFLAG_COPY'				=> '<a href="%1$s" onclick="window.open(this.href);return false;" title="Breizh Country Flag">Drapeaux des Pays par Sylver35</a> » V %2$s',
 	'LOG_CONFIG_COUNTRYFLAG'		=> '<strong>Modification des paramètres des drapeaux</strong><br/> » Mise à jour de la configuration générale des drapeaux des pays',
 ));

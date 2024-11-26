@@ -14,6 +14,7 @@ use phpbb\db\driver\driver_interface as db;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use phpbb\auth\auth;
 use phpbb\language\language;
 use phpbb\extension\manager;
 
@@ -36,6 +37,9 @@ class country
 
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var \phpbb\auth\auth */
+	protected $auth;
 
 	/** @var \phpbb\language\language */
 	protected $language;
@@ -61,7 +65,7 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
+	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, auth $auth, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
 	{
 		$this->config = $config;
 		$this->cache = $cache;
@@ -69,6 +73,7 @@ class country
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->auth = $auth;
 		$this->language = $language;
 		$this->ext_manager = $ext_manager;
 		$this->root_path = $root_path;
@@ -77,23 +82,11 @@ class country
 		$this->ext_path = generate_board_url() . '/ext/sylver35/countryflag/';
 	}
 
-	public function get_country_users_cache()
-	{
-		return $this->cache->get('_country_users');
-	}
-
-	public function destroy_country_users_cache()
-	{
-		$this->cache->destroy('_country_users');
-	}
-
 	public function cache_country_users()
 	{
-		if ($this->cache->get('_country_users') === false)
+		if (($country = $this->cache->get('_country_users')) === false)
 		{
-			$data = [
-				0	=> $this->get_version(),
-			];
+			$data = [0	=> $this->get_version()];
 			$sql_ary = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'u.user_id, u.user_country, c.code_iso, c.country_en, c.country_fr',
 				'FROM'		=> [USERS_TABLE => 'u'],
@@ -122,12 +115,20 @@ class country
 			$this->cache->put('_country_users', $data, 604800);
 			$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
 		}
+
+		return $country;
 	}
 
 	public function update_config_refresh()
 	{
 		$this->config->set_atomic('countryflag_refresh_cache', 0, 1, false);
 	}
+
+	public function destroy_country_users_cache()
+	{
+		$this->cache->destroy('_country_users');
+	}
+
 
 	public function get_version()
 	{
@@ -150,7 +151,14 @@ class country
 	public function display_message()
 	{
 		// Display message choosing country
-		if ($this->config['countryflag_message'])
+		if (!$this->auth->acl_get('u_chgprofileinfo'))
+		{
+			$this->template->assign_vars([
+				'S_COUNTRY_MESSAGE_DISPLAY'	=> true,
+				'COUNTRY_PROFILE_GO_TO'		=> $this->language->lang('COUNTRYFLAG_CHGPROFILEINFO'),
+			]);
+		}
+		else if ($this->config['countryflag_message'])
 		{
 			$this->template->assign_vars([
 				'S_COUNTRY_MESSAGE_DISPLAY'	=> true,
@@ -162,7 +170,7 @@ class country
 	public function redirect_to_profile()
 	{
 		// Redirect if needed
-		if ($this->config['countryflag_redirect'])
+		if ($this->config['countryflag_redirect'] && $this->auth->acl_get('u_chgprofileinfo') && !$this->user->data['user_country'])
 		{
 			$page_name = substr($this->user->page['page_name'], 0, strpos($this->user->page['page_name'], '.'));
 			if ($page_name != 'ucp')
@@ -174,7 +182,7 @@ class country
 
 	public function write_version()
 	{
-		$version = $this->get_country_users_cache();
+		$version = $this->cache_country_users();
 		$this->template->assign_var('COUNTRYFLAG_COPY', $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']));
 	}
 
