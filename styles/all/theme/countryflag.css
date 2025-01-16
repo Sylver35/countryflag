@@ -13,6 +13,10 @@ img.flag-user, .notification_list ul li img.flag-user, a.header-avatar img.flag-
 	float: none;
 }
 
+img.flag-5, .notification_list ul li img.flag-5, a.header-avatar img.flag-5 {
+	max-width: 5px;
+}
+
 img.flag-6, .notification_list ul li img.flag-6, a.header-avatar img.flag-6 {
 	max-width: 6px;
 }
@@ -71,4 +75,12 @@ img.flag-19, .notification_list ul li img.flag-19, a.header-avatar img.flag-19 {
 
 img.flag-20, .notification_list ul li img.flag-20, a.header-avatar img.flag-20 {
 	max-width: 20px;
+}
+
+img.flag-21, .notification_list ul li img.flag-21, a.header-avatar img.flag-21 {
+	max-width: 21px;
+}
+
+img.flag-22, .notification_list ul li img.flag-22, a.header-avatar img.flag-22 {
+	max-width: 22px;
 }

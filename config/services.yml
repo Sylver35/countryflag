@@ -11,8 +11,6 @@ services:
             - '@user'
             - '@language'
             - '@request'
-            - '%core.root_path%'
-            - '%core.php_ext%'
         tags:
             - { name: event.listener }
     sylver35.countryflag.controller:
@@ -26,6 +24,8 @@ services:
             - '@template'
             - '@user'
             - '@language'
+            - '@path_helper'
+            - '@ext.manager'
             - '%sylver35.countryflag.tables.countryflag%'
     sylver35.countryflag.country:
         class: sylver35\countryflag\core\country

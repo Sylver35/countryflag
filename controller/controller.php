@@ -3,7 +3,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -17,6 +17,8 @@ use phpbb\log\log;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb\language\language;
+use phpbb\path_helper;
+use phpbb\extension\manager;
 
 class controller
 {
@@ -44,11 +46,20 @@ class controller
 	/** @var \phpbb\language\language */
 	protected $language;
 
+	/* @var \phpbb\path_helper */
+	protected $path_helper;
+
+	/** @var \phpbb\extension\manager */
+	protected $ext_manager;
+
 	/** @var string Custom form action */
 	protected $u_action;
 
 	/** @var string ext path */
 	protected $ext_path;
+
+	/** @var string ext path web */
+	protected $ext_path_web;
 
 	/**
 	 * The countryflag database table
@@ -59,7 +70,7 @@ class controller
 	/**
 	 * Controller constructor
 	 */
-	public function __construct(country $country, config $config, request $request, db $db, log $log, template $template, user $user, language $language, $countryflag_table)
+	public function __construct(country $country, config $config, request $request, db $db, log $log, template $template, user $user, language $language, path_helper $path_helper, manager $ext_manager, $countryflag_table)
 	{
 		$this->country = $country;
 		$this->config = $config;
@@ -69,8 +80,11 @@ class controller
 		$this->template = $template;
 		$this->user = $user;
 		$this->language = $language;
+		$this->path_helper = $path_helper;
+		$this->ext_manager = $ext_manager;
 		$this->countryflag_table = $countryflag_table;
-		$this->ext_path = generate_board_url() . '/ext/sylver35/countryflag/';
+		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/countryflag', true);
+		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function acp_config_countryflag()
@@ -83,16 +97,21 @@ class controller
 			{
 				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
-			$this->config->set('countryflag_required', $this->request->variable('countryflag_required', true));
-			$this->config->set('countryflag_message', $this->request->variable('countryflag_message', true));
-			$this->config->set('countryflag_redirect', $this->request->variable('countryflag_redirect', true));
-			$this->config->set('countryflag_position', $this->request->variable('countryflag_position', true));
-			$this->config->set('countryflag_default', $this->request->variable('countryflag_default', ''));
-			$this->config->set('countryflag_width', $this->request->variable('countryflag_width', 12));
-			$this->config->set('countryflag_width_anim', $this->request->variable('countryflag_width_anim', 48));
-			$this->config->set('countryflag_display_topic', $this->request->variable('countryflag_display_topic', true));
-			$this->config->set('countryflag_display_pm', $this->request->variable('countryflag_display_pm', true));
-			$this->config->set('countryflag_display_memberlist', $this->request->variable('countryflag_display_memberlist', true));
+
+			$data = [
+				'countryflag_required'			=> $this->request->variable('countryflag_required', true),
+				'countryflag_message'			=> $this->request->variable('countryflag_message', true),
+				'countryflag_redirect'			=> $this->request->variable('countryflag_redirect', true),
+				'countryflag_position'			=> $this->request->variable('countryflag_position', true),
+				'countryflag_default'			=> $this->request->variable('countryflag_default', ''),
+				'countryflag_width'				=> $this->request->variable('countryflag_width', 12),
+				'countryflag_width_anim'		=> $this->request->variable('countryflag_width_anim', 48),
+				'countryflag_display_topic'		=> $this->request->variable('countryflag_display_topic', true),
+				'countryflag_display_pm'		=> $this->request->variable('countryflag_display_pm', true),
+				'countryflag_display_memberlist'=> $this->request->variable('countryflag_display_memberlist', true),
+			];
+
+			$this->update_config($data);
 
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_COUNTRYFLAG', time());
 			trigger_error($this->language->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
@@ -102,15 +121,15 @@ class controller
 			$meta = $this->country->get_version();
 			$this->config_select_flag();
 			$this->template->assign_vars([
-				'COUNTRYFLAG_REQUIRED'			=> $this->config['countryflag_required'] ? true : false,
-				'COUNTRYFLAG_MESSAGE'			=> $this->config['countryflag_message'] ? true : false,
-				'COUNTRYFLAG_REDIRECT'			=> $this->config['countryflag_redirect'] ? true : false,
-				'COUNTRYFLAG_POSITION'			=> $this->config['countryflag_position'] ? true : false,
-				'COUNTRYFLAG_WIDTH'				=> $this->config['countryflag_width'],
-				'COUNTRYFLAG_WIDTH_ANIM'		=> $this->config['countryflag_width_anim'],
-				'COUNTRYFLAG_DISPLAY_TOPIC'		=> $this->config['countryflag_display_topic'] ? true : false,
-				'COUNTRYFLAG_DISPLAY_PM'		=> $this->config['countryflag_display_pm'] ? true : false,
-				'COUNTRYFLAG_DISPLAY_MEMBERLIST'=> $this->config['countryflag_display_memberlist'] ? true : false,
+				'COUNTRYFLAG_REQUIRED'			=> (bool) $this->config['countryflag_required'],
+				'COUNTRYFLAG_MESSAGE'			=> (bool) $this->config['countryflag_message'],
+				'COUNTRYFLAG_REDIRECT'			=> (bool) $this->config['countryflag_redirect'],
+				'COUNTRYFLAG_POSITION'			=> (bool) $this->config['countryflag_position'],
+				'COUNTRYFLAG_WIDTH'				=> (int) $this->config['countryflag_width'],
+				'COUNTRYFLAG_WIDTH_ANIM'		=> (int) $this->config['countryflag_width_anim'],
+				'COUNTRYFLAG_DISPLAY_TOPIC'		=> (bool) $this->config['countryflag_display_topic'],
+				'COUNTRYFLAG_DISPLAY_PM'		=> (bool) $this->config['countryflag_display_pm'],
+				'COUNTRYFLAG_DISPLAY_MEMBERLIST'=> (bool) $this->config['countryflag_display_memberlist'],
 				'COUNTRYFLAG_COPY'				=> $this->language->lang('COUNTRYFLAG_COPY', $meta['homepage'], $meta['version']),
 			]);
 		}
@@ -127,7 +146,7 @@ class controller
 		$sql = [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
 			'FROM'		=> [$this->countryflag_table => ''],
-			'ORDER_BY'	=> 'country_' . $sort,
+			'ORDER_BY'	=> 'country_' . (string) $sort,
 		];
 		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
 		while ($row = $this->db->sql_fetchrow($result))
@@ -135,7 +154,7 @@ class controller
 			$selected = '';
 			$row['country_fr'] = $this->country->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] == $this->config['countryflag_default'])
+			if ((string) $row['code_iso'] === (string) $this->config['countryflag_default'])
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
@@ -146,11 +165,19 @@ class controller
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars([
-			'COUNTRY_FLAG_PATH'			=> $this->ext_path . 'flags/',
-			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path . 'flags/' . $flag_image . '.png',
+			'COUNTRY_FLAG_PATH'			=> $this->ext_path_web . 'flags/',
+			'COUNTRY_FLAG_IMAGE'		=> $this->ext_path_web . 'flags/' . $flag_image . '.png',
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		]);
+	}
+
+	private function update_config($data)
+	{
+		foreach ($data as $key => $value)
+		{
+			$this->config->set($key, $value);
+		}
 	}
 
 	/**

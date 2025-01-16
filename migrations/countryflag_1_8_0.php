@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -22,11 +22,7 @@ class countryflag_1_8_0 extends migration
 		return [
 			['config.add', ['countryflag_refresh_cache', '0', 1]],
 
-			['custom',
-				[
-					[&$this, 'update_country_flag'],
-				],
-			],
+			['custom', [[&$this, 'update_country_flag']]],
 		];
 	}
 

@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -142,9 +142,9 @@ class country
 
 	public function get_lang()
 	{
-		$lang_bc = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
+		$lang = ($this->user->lang_name == 'fr') ? 'fr' : 'en';
 
-		return $lang_bc;
+		return $lang;
 	}
 
 	public function display_message()
@@ -242,10 +242,7 @@ class country
 	 */
 	public function get_country_img_anim($id)
 	{
-		$img = [
-			'image'		=> '',
-			'country'	=> '',
-		];
+		$img = ['image' => '', 'country' => ''];
 		$country = $this->cache->get('_country_users');
 		if (isset($country[$id]['user_id']))
 		{
@@ -306,7 +303,7 @@ class country
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
-		$sort = $this->get_lang();
+		$sort = (string) $this->get_lang();
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -349,7 +346,7 @@ class country
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
-		$sort = $this->get_lang();
+		$sort = (string) $this->get_lang();
 
 		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 		$sql = $this->db->sql_build_query('SELECT', [

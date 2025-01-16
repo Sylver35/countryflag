@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -36,16 +36,10 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\request\request */
 	protected $request;
 
-	/** @var string phpBB root path */
-	protected $root_path;
-
-	/** @var string phpEx */
-	protected $php_ext;
-
 	/**
 	 * Listener constructor
 	 */
-	public function __construct(country $country, config $config, template $template, user $user, language $language, request $request, $root_path, $php_ext)
+	public function __construct(country $country, config $config, template $template, user $user, language $language, request $request)
 	{
 		$this->country = $country;
 		$this->config = $config;
@@ -53,8 +47,6 @@ class listener implements EventSubscriberInterface
 		$this->user = $user;
 		$this->language = $language;
 		$this->request = $request;
-		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;
 	}
 
 	/**

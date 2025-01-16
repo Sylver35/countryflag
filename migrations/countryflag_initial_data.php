@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -34,35 +34,18 @@ class countryflag_initial_data extends \phpbb\db\migration\migration
 			['config.add', ['countryflag_display_pm', true]],
 			['config.add', ['countryflag_display_memberlist', true]],
 
-			[
-				'module.add',
-				[
-					'acp',
-					'ACP_CAT_DOT_MODS',
-					[
-						'module_langname'	=> 'ACP_COUNTRYFLAG_MODULE',
-					],
-				],
-			],
-			[
-				'module.add',
-				[
-					'acp',
-					'ACP_COUNTRYFLAG_MODULE',
-					[
-						'module_basename'	=> '\sylver35\countryflag\acp\main_module',
-						'module_langname'	=> 'ACP_COUNTRYFLAG_CONFIG',
-						'module_mode'		=> 'config',
-						'module_auth'		=> 'ext_sylver35/countryflag && acl_a_board',
-					],
-				],
-			],
+			['module.add', ['acp', 'ACP_CAT_DOT_MODS', [
+				'module_langname'	=> 'ACP_COUNTRYFLAG_MODULE',
+			]]],
 
-			['custom',
-				[
-					[&$this, 'install_country_flag'],
-				],
-			],
+			['module.add', ['acp', 'ACP_COUNTRYFLAG_MODULE', [
+				'module_basename'	=> '\sylver35\countryflag\acp\main_module',
+				'module_langname'	=> 'ACP_COUNTRYFLAG_CONFIG',
+				'module_mode'		=> 'config',
+				'module_auth'		=> 'ext_sylver35/countryflag && acl_a_board',
+			]]],
+
+			['custom', [[&$this, 'install_country_flag']]],
 		];
 	}
 

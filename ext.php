@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Country Flag Extension
- * @copyright	(c) 2019-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2019-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -24,7 +24,7 @@ class ext extends \phpbb\extension\base
 	 * The current phpBB version should meet or exceed
 	 * the minimum version required by this extension:
 	 *
-	 * Requires phpBB 3.3.13 and PHP 7.2
+	 * Requires phpBB 3.3.8 and PHP 7.2
 	 *
 	 * @return bool
 	 * @access public
@@ -33,6 +33,6 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.13', '>=') && version_compare(PHP_VERSION, '7.2', '>=');
+		return phpbb_version_compare($config['version'], '3.3.8', '>=') && version_compare(PHP_VERSION, '7.2', '>=');
 	}
 }
