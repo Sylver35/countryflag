@@ -94,16 +94,12 @@ class country
 
 		if (is_array($list) && is_array($country_list))
 		{
-			array_multisort(
-				array_column($country_list, 'total'),
-				SORT_DESC,
-				array_column($country_list, 'code_iso'),
-				SORT_ASC,
-				$country_list,
-			);
-
+			$total = array_column($country_list, 'total');
+			$code_iso = array_column($country_list, 'code_iso');
+			array_multisort( $total, SORT_DESC, $code_iso, SORT_ASC, $country_list);
 			$nb = (int) $this->config['countryflag_index_lines'] * 7;
 			$nb = ($nb > count($list)) ? count($list) : $nb;
+
 			for ($i = 0; $i < $nb; $i++)
 			{
 				if (isset($country_list[$i]) && in_array($country_list[$i]['id'], $list))
