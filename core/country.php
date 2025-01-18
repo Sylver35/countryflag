@@ -96,7 +96,7 @@ class country
 		{
 			$total = array_column($country_list, 'total');
 			$code_iso = array_column($country_list, 'code_iso');
-			array_multisort( $total, SORT_DESC, $code_iso, SORT_ASC, $country_list);
+			array_multisort($total, SORT_DESC, $code_iso, SORT_ASC, $country_list);
 			$nb = (int) $this->config['countryflag_index_lines'] * 7;
 			$nb = ($nb > count($list)) ? count($list) : $nb;
 
@@ -187,25 +187,38 @@ class country
 			$this->config['countryflag_width'],
 		);
 
+		// Display the flag before or after username
 		if ($this->get_position($position))
 		{
-			// Display the flag before username
 			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
 		}
 		else
 		{
-			// Display the flag after username
 			$username = $username . $this->language->lang('COUNTRYFLAG_SEPARATE') . $flag;
 		}
 
 		return $username;
 	}
 
+	/**
+	 * Clean double quotes added in somes db
+	 *
+	 * @param string $img
+	 * @return string
+	 * @access private
+	 */
 	private function clean_img($img)
 	{
 		return str_replace(['\\', '&quot;', '""'], ['', '"', '"'], $this->config[$img]);
 	}
 
+	/**
+	 * Get flag position
+	 *
+	 * @param string $pos
+	 * @return bool
+	 * @access private
+	 */
 	private function get_position($pos)
 	{
 		$position = (bool) $this->config['countryflag_position'];
@@ -218,7 +231,7 @@ class country
 		}
 		else
 		{
-			$position = ($pos === 'left') ? true : false;
+			$position = (bool) ($pos === 'left');
 		}
 
 		return $position;
@@ -227,7 +240,7 @@ class country
 	/**
 	 * Display anim flag
 	 *
-	 * @param int $id
+	 * @param (user id) int $id
 	 * @return array
 	 * @access public
 	 */
@@ -255,9 +268,9 @@ class country
 	}
 
 	/**
-	 * Display anim flag
+	 * Display anim flag in list
 	 *
-	 * @param int $id
+	 * @param (flag id) int $id
 	 * @return array
 	 * @access public
 	 */
