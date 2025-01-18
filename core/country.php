@@ -254,8 +254,8 @@ class country
 			$flag_anim = sprintf(
 				$this->clean_img('countryflag_img_anim'),
 				$this->ext_path . 'anim/' . $country[$user_id]['code_iso'] . '.gif',
-				$country[$id]['country_' . $lang],
-				$country[$id]['country_' . $lang] . ' (' . $country[$user_id]['code_iso'] . ')',
+				$country[$user_id]['country_' . $lang],
+				$country[$user_id]['country_' . $lang] . ' (' . $country[$user_id]['code_iso'] . ')',
 				$this->config['countryflag_width_anim'],
 			);
 			$img = [
