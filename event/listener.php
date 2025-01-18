@@ -10,6 +10,7 @@ namespace sylver35\countryflag\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\countryflag\core\country;
+use sylver35\countryflag\core\cache_country;
 use phpbb\config\config;
 use phpbb\template\template;
 use phpbb\user;
@@ -20,6 +21,9 @@ class listener implements EventSubscriberInterface
 {
 	/* @var \sylver35\countryflag\core\country */
 	protected $country;
+
+	/** @var \sylver35\countryflag\core\cache_country */
+	protected $cache_country;
 
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -39,9 +43,10 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Listener constructor
 	 */
-	public function __construct(country $country, config $config, template $template, user $user, language $language, request $request)
+	public function __construct(country $country, cache_country $cache_country, config $config, template $template, user $user, language $language, request $request)
 	{
 		$this->country = $country;
+		$this->cache_country = $cache_country;
 		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
@@ -59,6 +64,7 @@ class listener implements EventSubscriberInterface
 		return [
 			'core.user_setup' 									=> 'load_language_on_setup',
 			'core.page_header_after'							=> 'page_header_after',
+			'core.index_modify_page_title'						=> 'index_modify_page_title',
 			'core.modify_username_string' 						=> 'modify_username_string_flag',
 			'core.memberlist_view_profile'						=> 'memberlist_view_profile_img_anim',
 			'core.viewtopic_modify_post_row'					=> 'viewtopic_post_row_img_anim',
@@ -103,8 +109,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_refresh_cache'])
 		{
 			// Refresh the country users cache now
-			$this->country->destroy_country_users_cache();
-			$this->country->cache_country_users();
+			$this->cache_country->destroy_country_users_cache();
 		}
 
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
@@ -121,6 +126,19 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
+	 * Display list of country users flag on index
+	 *
+	 * @param array $event
+	 */
+	public function index_modify_page_title()
+	{
+		if ($this->config['countryflag_display_index'])
+		{
+			$this->country->display_list_on_index();
+		}
+	}
+
+	/**
 	 * Display flag with username
 	 *
 	 * @param array $event
@@ -131,7 +149,7 @@ class listener implements EventSubscriberInterface
 		{
 			$id = $event['user_id'];
 			// Get the country users from cache
-			$data = $this->country->cache_country_users();
+			$data = $this->cache_country->country_users();
 			// Do this just for users who have selected country
 			if (isset($data[$id]['user_id']))
 			{
@@ -207,8 +225,8 @@ class listener implements EventSubscriberInterface
 		}
 		else if ($event['submit'])
 		{
-			// Say to refresh the country users cache now
-			$this->country->update_config_refresh();
+			// Say to refresh the country users cache after update
+			$this->cache_country->update_config_refresh();
 		}
 	}
 
@@ -227,8 +245,8 @@ class listener implements EventSubscriberInterface
 		}
 		else if ($event['submit'])
 		{
-			// Say to refresh the country users cache now
-			$this->country->update_config_refresh();
+			// Say to refresh the country users cache after update
+			$this->cache_country->update_config_refresh();
 		}
 	}
 
@@ -324,8 +342,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function update_config_refresh()
 	{
-		// Say to refresh the country users cache now
-		$this->country->update_config_refresh();
+		// Say to refresh the country users cache after update
+		$this->cache_country->update_config_refresh();
 	}
 
 	/**

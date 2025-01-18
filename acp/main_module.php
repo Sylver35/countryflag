@@ -25,11 +25,14 @@ class main_module
 
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
+
 		/** @type \phpbb\template\template $template Template object */
 		$template = $phpbb_container->get('template');
+
 		// Get an instance of the admin controller
 		/** @type \sylver35\countryflag\controller\controller $admin_controller */
 		$admin_controller = $phpbb_container->get('sylver35.countryflag.controller');
+
 		// Make the $u_action url available in the controller
 		$admin_controller->set_page_url($this->u_action);
 
@@ -38,8 +41,6 @@ class main_module
 
 		$admin_controller->acp_config_countryflag();
 
-		$template->assign_vars([
-			'U_ACTION'	=> $this->u_action,
-		]);
+		$template->assign_var('U_ACTION', $this->u_action);
 	}
 }

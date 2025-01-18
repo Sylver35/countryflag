@@ -6,6 +6,7 @@ services:
         class: sylver35\countryflag\event\listener
         arguments:
             - '@sylver35.countryflag.country'
+            - '@sylver35.countryflag.cache_country'
             - '@config'
             - '@template'
             - '@user'
@@ -17,6 +18,7 @@ services:
         class: sylver35\countryflag\controller\controller
         arguments:
             - '@sylver35.countryflag.country'
+            - '@sylver35.countryflag.cache_country'
             - '@config'
             - '@request'
             - '@dbal.conn'
@@ -29,6 +31,22 @@ services:
             - '%sylver35.countryflag.tables.countryflag%'
     sylver35.countryflag.country:
         class: sylver35\countryflag\core\country
+        arguments:
+            - '@sylver35.countryflag.cache_country'
+            - '@config'
+            - '@cache.driver'
+            - '@dbal.conn'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@auth'
+            - '@language'
+            - '@ext.manager'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.countryflag.tables.countryflag%'
+    sylver35.countryflag.cache_country:
+        class: sylver35\countryflag\core\cache_country
         arguments:
             - '@config'
             - '@cache.driver'

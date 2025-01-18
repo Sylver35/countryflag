@@ -6,6 +6,26 @@
 	vertical-align: middle;
 }
 
+div.list-contener-flex {
+	display: flex;
+	display: -webkit-flex;
+	flex-wrap: wrap;
+	align-content: center;
+	align-items: stretch;
+	margin: 5px 0;
+}
+
+p.list_flags {
+	align-content: center;
+	text-align: center;
+	width: 14.28%;
+}
+
+span.list-flag-item {
+	margin-bottom: 8px;
+	line-height: 1.1rem;
+}
+
 img.flag-user, .notification_list ul li img.flag-user, a.header-avatar img.flag-user, ul li img.flag-user {
 	margin: 0;
 	vertical-align: baseline;

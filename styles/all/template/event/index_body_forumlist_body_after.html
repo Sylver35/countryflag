@@ -1,0 +1,31 @@
+
+{% if S_FLAG_LIST_INDEX %}
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dt>
+						<div class="list-inner">{{ lang('ACP_COUNTRYFLAG_MODULE') }}</div>
+					</dt>
+					<dd class="lastpost">{{ lang('COUNTRYFLAG_DISPLAY') }}</dd>
+				</dl>
+			</li>
+		</ul>
+
+		<ul class="topiclist forums">
+			<li class="row bg1">
+				<div class="list-contener-flex">
+				{% for flag in flags %}
+					<p class="list_flags">
+						<span class="list-flag-item">{{ flag.COUNTRY }} ({{ flag.TOTAL }})</span><br>
+						{{ flag.IMG_SRC }}
+					</p>
+				{% if flag.ROW_COUNT eq 6 or flag.ROW_COUNT eq 13 %}</div><div class="list-contener-flex">{% endif %}
+				{% endfor %}
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+{% endif %}

@@ -10,6 +10,7 @@
 namespace sylver35\countryflag\controller;
 
 use sylver35\countryflag\core\country;
+use sylver35\countryflag\core\cache_country;
 use phpbb\config\config;
 use phpbb\request\request;
 use phpbb\db\driver\driver_interface as db;
@@ -24,6 +25,9 @@ class controller
 {
 	/* @var \sylver35\countryflag\core\country */
 	protected $country;
+
+	/** @var \sylver35\countryflag\core\cache_country */
+	protected $cache_country;
 
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -70,9 +74,10 @@ class controller
 	/**
 	 * Controller constructor
 	 */
-	public function __construct(country $country, config $config, request $request, db $db, log $log, template $template, user $user, language $language, path_helper $path_helper, manager $ext_manager, $countryflag_table)
+	public function __construct(country $country, cache_country $cache_country, config $config, request $request, db $db, log $log, template $template, user $user, language $language, path_helper $path_helper, manager $ext_manager, $countryflag_table)
 	{
 		$this->country = $country;
+		$this->cache_country = $cache_country;
 		$this->config = $config;
 		$this->request = $request;
 		$this->db = $db;
@@ -109,6 +114,8 @@ class controller
 				'countryflag_display_topic'		=> $this->request->variable('countryflag_display_topic', true),
 				'countryflag_display_pm'		=> $this->request->variable('countryflag_display_pm', true),
 				'countryflag_display_memberlist'=> $this->request->variable('countryflag_display_memberlist', true),
+				'countryflag_display_index'		=> $this->request->variable('countryflag_display_index', true),
+				'countryflag_index_lines'		=> $this->request->variable('countryflag_index_lines', 1),
 			];
 
 			$this->update_config($data);
@@ -130,6 +137,8 @@ class controller
 				'COUNTRYFLAG_DISPLAY_TOPIC'		=> (bool) $this->config['countryflag_display_topic'],
 				'COUNTRYFLAG_DISPLAY_PM'		=> (bool) $this->config['countryflag_display_pm'],
 				'COUNTRYFLAG_DISPLAY_MEMBERLIST'=> (bool) $this->config['countryflag_display_memberlist'],
+				'COUNTRYFLAG_DISPLAY_INDEX'		=> (bool) $this->config['countryflag_display_index'],
+				'COUNTRYFLAG_INDEX_LINES'		=> (int) $this->config['countryflag_index_lines'],
 				'COUNTRYFLAG_COPY'				=> $this->language->lang('COUNTRYFLAG_COPY', $meta['homepage'], $meta['version']),
 			]);
 		}
@@ -152,7 +161,7 @@ class controller
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->country->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if ((string) $row['code_iso'] === (string) $this->config['countryflag_default'])
 			{

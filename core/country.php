@@ -8,6 +8,7 @@
 
 namespace sylver35\countryflag\core;
 
+use sylver35\countryflag\core\cache_country;
 use phpbb\config\config;
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
@@ -20,6 +21,9 @@ use phpbb\extension\manager;
 
 class country
 {
+	/** @var \sylver35\countryflag\core\cache_country */
+	protected $cache_country;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -65,8 +69,9 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(config $config, cache $cache, db $db, request $request, template $template, user $user, auth $auth, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
+	public function __construct(cache_country $cache_country, config $config, cache $cache, db $db, request $request, template $template, user $user, auth $auth, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
 	{
+		$this->cache_country = $cache_country;
 		$this->config = $config;
 		$this->cache = $cache;
 		$this->db = $db;
@@ -82,51 +87,41 @@ class country
 		$this->ext_path = generate_board_url() . '/ext/sylver35/countryflag/';
 	}
 
-	public function cache_country_users()
+	public function display_list_on_index()
 	{
-		if (($country = $this->cache->get('_country_users')) === false)
+		$list = $this->cache_country->country_list_users();
+		$country_list = $this->cache_country->country_list();
+
+		if (is_array($list) && is_array($country_list))
 		{
-			$data = [0	=> $this->get_version()];
-			$sql_ary = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'u.user_id, u.user_country, c.code_iso, c.country_en, c.country_fr',
-				'FROM'		=> [USERS_TABLE => 'u'],
-				'LEFT_JOIN'	=> [
-					[
-						'FROM'	=> [$this->countryflag_table => 'c'],
-						'ON'	=> 'c.code_iso = u.user_country',
-					],
-				],
-				'WHERE'		=> "u.user_country <> '0'",
-				'ORDER_BY'	=> 'u.user_id ASC',
-			]);
-			$result = $this->db->sql_query($sql_ary);
-			while ($row = $this->db->sql_fetchrow($result))
+			array_multisort(
+				array_column($country_list, 'total'),
+				SORT_DESC,
+				array_column($country_list, 'code_iso'),
+				SORT_ASC,
+				$country_list,
+			);
+
+			$nb = (int) $this->config['countryflag_index_lines'] * 7;
+			$nb = ($nb > count($list)) ? count($list) : $nb;
+			for ($i = 0; $i < $nb; $i++)
 			{
-				$data[$row['user_id']] = [
-					'user_id'		=> $row['user_id'],
-					'code_iso'		=> $row['code_iso'],
-					'country_en'	=> $row['country_en'],
-					'country_fr'	=> $this->accent_in_country($row['code_iso'], $row['country_fr']),
-				];
+				if (isset($country_list[$i]) && in_array($country_list[$i]['id'], $list))
+				{
+					$img = $this->get_img_anim_list($country_list[$i]['id']);
+					$this->template->assign_block_vars('flags', [
+						'IMG_SRC'		=> $img['image'],
+						'COUNTRY'		=> $img['country'],
+						'TOTAL'			=> $country_list[$i]['total'],
+						'ROW_COUNT'		=> $i,
+					]);
+				}
 			}
-			$this->db->sql_freeresult($result);
 
-			// cache for 7 days
-			$this->cache->put('_country_users', $data, 604800);
-			$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
+			$this->template->assign_vars([
+				'S_FLAG_LIST_INDEX'		=> true,
+			]);
 		}
-
-		return $country;
-	}
-
-	public function update_config_refresh()
-	{
-		$this->config->set_atomic('countryflag_refresh_cache', 0, 1, false);
-	}
-
-	public function destroy_country_users_cache()
-	{
-		$this->cache->destroy('_country_users');
 	}
 
 	public function get_version()
@@ -181,8 +176,8 @@ class country
 
 	public function write_version()
 	{
-		$version = $this->cache_country_users();
-		$this->template->assign_var('COUNTRYFLAG_COPY', $this->language->lang('COUNTRYFLAG_COPY', $version[0]['homepage'], $version[0]['version']));
+		$version = $this->get_version();
+		$this->template->assign_var('COUNTRYFLAG_COPY', $this->language->lang('COUNTRYFLAG_COPY', $version['homepage'], $version['version']));
 	}
 
 	public function get_country_img($username, $iso, $country, $position = 'none')
@@ -243,8 +238,38 @@ class country
 	public function get_country_img_anim($id)
 	{
 		$img = ['image' => '', 'country' => ''];
-		$country = $this->cache->get('_country_users');
+		$country = $this->cache_country->country_users();
 		if (isset($country[$id]['user_id']))
+		{
+			$lang = $this->get_lang();
+			$flag_anim = sprintf(
+				$this->clean_img('countryflag_img_anim'),
+				$this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif',
+				$country[$id]['country_' . $lang],
+				$country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')',
+				$this->config['countryflag_width_anim'],
+			);
+			$img = [
+				'image'		=> $flag_anim,
+				'country'	=> $country[$id]['country_' . $lang],
+			];
+		}
+
+		return $img;
+	}
+
+	/**
+	 * Display anim flag
+	 *
+	 * @param int $id
+	 * @return array
+	 * @access public
+	 */
+	public function get_img_anim_list($id)
+	{
+		$img = ['image' => '', 'country' => ''];
+		$country = $this->cache_country->country_list();
+		if (isset($country[$id]))
 		{
 			$lang = $this->get_lang();
 			$flag_anim = sprintf(
@@ -267,7 +292,6 @@ class country
 	 * Add country select in member form
 	 *
 	 * @param array $event
-	 * @param string $country
 	 * @param bool $on_acp
 	 * @param bool $on_profile
 	 * @return void
@@ -315,7 +339,7 @@ class country
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if (($row['code_iso'] === $flag) || ($row['code_iso'] === $this->config['countryflag_default']) && !$flag && !$on_profile)
 			{
@@ -358,7 +382,7 @@ class country
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if ($row['code_iso'] === $flag)
 			{
@@ -376,24 +400,6 @@ class country
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		]);
-	}
-
-	/**
-	 * Add accent for somes countries
-	 *
-	 * @param string $iso
-	 * @param string $country
-	 * @return string
-	 * @access public
-	 */
-	public function accent_in_country($iso, $country)
-	{
-		if (in_array($iso, ['ae', 'ec', 'eg', 'er', 'et', 'us']))
-		{
-			$country = str_replace('E', 'É', $country);
-		}
-
-		return $country;
 	}
 
 	/**

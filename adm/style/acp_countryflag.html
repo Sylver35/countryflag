@@ -77,7 +77,22 @@
 				<label><input type="radio" class="radio" name="countryflag_display_memberlist" value="1"{% if COUNTRYFLAG_DISPLAY_MEMBERLIST %} checked="checked" id="countryflag_display_memberlist"{% endif %}> {{ lang('COUNTRYFLAG_ACTIVATE') }}</label>
 				<label><input type="radio" class="radio" name="countryflag_display_memberlist" value="0"{% if not COUNTRYFLAG_DISPLAY_MEMBERLIST %} checked="checked" id="countryflag_display_memberlist"{% endif %}> {{ lang('COUNTRYFLAG_DEACTIVATE') }}</label>
 			</dd>
-		</dl>	
+		</dl>
+		<dl>
+			<dt><label for="countryflag_display_index">{{ lang('COUNTRYFLAG_INDEX') }}{{ lang('COLON') }}</label><br/><span>{{ lang('COUNTRYFLAG_INDEX_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_display_index" value="1"{% if COUNTRYFLAG_DISPLAY_INDEX %} checked="checked" id="countryflag_display_index"{% endif %}> {{ lang('COUNTRYFLAG_ACTIVATE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_display_index" value="0"{% if not COUNTRYFLAG_DISPLAY_INDEX %} checked="checked" id="countryflag_display_index"{% endif %}> {{ lang('COUNTRYFLAG_DEACTIVATE') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="countryflag_index_lines">{{ lang('COUNTRYFLAG_INDEX_LINES') }}{{ lang('COLON') }}</label><br/><span>{{ lang('COUNTRYFLAG_INDEX_LINES_EXPLAIN') }}</span></dt>
+			<dd style="margin-top:12px;">
+				<label><input type="radio" class="radio" name="countryflag_index_lines" value="1"{% if COUNTRYFLAG_INDEX_LINES eq 1 %} checked="checked" id="countryflag_index_lines"{% endif %}> 1 {{ lang('COUNTRYFLAG_LINE') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_index_lines" value="2"{% if COUNTRYFLAG_INDEX_LINES eq 2 %} checked="checked" id="countryflag_index_lines"{% endif %}> 2 {{ lang('COUNTRYFLAG_LINES') }}</label>
+				<label><input type="radio" class="radio" name="countryflag_index_lines" value="3"{% if COUNTRYFLAG_INDEX_LINES eq 3 %} checked="checked" id="countryflag_index_lines"{% endif %}> 3 {{ lang('COUNTRYFLAG_LINES') }}</label>
+			</dd>
+		</dl>
 		
 		<p class="submit-buttons">
 			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}">&nbsp;
