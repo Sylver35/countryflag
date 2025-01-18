@@ -240,27 +240,27 @@ class country
 	/**
 	 * Display anim flag
 	 *
-	 * @param (user id) int $id
+	 * @param int $user_id
 	 * @return array
 	 * @access public
 	 */
-	public function get_country_img_anim($id)
+	public function get_country_img_anim($user_id)
 	{
 		$img = ['image' => '', 'country' => ''];
 		$country = $this->cache_country->country_users();
-		if (isset($country[$id]['user_id']))
+		if (isset($country[$user_id]['user_id']))
 		{
 			$lang = $this->get_lang();
 			$flag_anim = sprintf(
 				$this->clean_img('countryflag_img_anim'),
-				$this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif',
+				$this->ext_path . 'anim/' . $country[$user_id]['code_iso'] . '.gif',
 				$country[$id]['country_' . $lang],
-				$country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')',
+				$country[$id]['country_' . $lang] . ' (' . $country[$user_id]['code_iso'] . ')',
 				$this->config['countryflag_width_anim'],
 			);
 			$img = [
 				'image'		=> $flag_anim,
-				'country'	=> $country[$id]['country_' . $lang],
+				'country'	=> $country[$user_id]['country_' . $lang],
 			];
 		}
 
