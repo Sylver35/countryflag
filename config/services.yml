@@ -42,6 +42,7 @@ services:
             - '@auth'
             - '@language'
             - '@ext.manager'
+            - '@service_container'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%sylver35.countryflag.tables.countryflag%'

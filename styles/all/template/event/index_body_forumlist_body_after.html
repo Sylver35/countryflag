@@ -1,4 +1,3 @@
-
 {% if S_FLAG_LIST_INDEX %}
 <div class="forabg">
 	<div class="inner">
@@ -10,6 +9,11 @@
 					</dt>
 					<dd class="lastpost">{{ lang('COUNTRYFLAG_DISPLAY') }}</dd>
 				</dl>
+				{% if S_COLLAPSE %}
+				{% set S_CC_FORUM_HIDDEN = S_COUNTRYFLAG_HIDDEN %}
+				{% set U_CC_COLLAPSE_URL = U_COUNTRYFLAG_COLLAPSE %}
+				{% include '@phpbb_collapsiblecategories/collapsible_categories_button.html' %}
+				{% endif %}
 			</li>
 		</ul>
 
@@ -17,11 +21,14 @@
 			<li class="row bg1">
 				<div class="list-contener-flex">
 				{% for flag in flags %}
-					<p class="list_flags">
+					<p class="list_flags" id="p-{{ flag.ROW_COUNT }}-{{ flag.ROW_ID }}">
 						<span class="list-flag-item">{{ flag.COUNTRY }} ({{ flag.TOTAL }})</span><br>
-						{{ flag.IMG_SRC }}
+						{{ flag.IMAGE }}
 					</p>
-				{% if flag.ROW_COUNT eq 6 or flag.ROW_COUNT eq 13 %}</div><div class="list-contener-flex">{% endif %}
+				{% if flag.ROW_COUNT eq 6 and flag.ROW_ID eq 6 or flag.ROW_COUNT eq 13 and flag.ROW_ID eq 13 %}
+				</div>
+				<div class="list-contener-flex">
+				{% endif %}
 				{% endfor %}
 				</div>
 			</li>

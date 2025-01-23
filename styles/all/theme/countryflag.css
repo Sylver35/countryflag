@@ -19,6 +19,7 @@ p.list_flags {
 	align-content: center;
 	text-align: center;
 	width: 14.28%;
+	margin-bottom: 0.3rem;
 }
 
 span.list-flag-item {

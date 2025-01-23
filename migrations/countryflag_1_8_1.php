@@ -20,7 +20,7 @@ class countryflag_1_8_1 extends migration
 	public function update_data()
 	{
 		return [
-			['config.add', ['countryflag_display_index', '0', 0]],
+			['config.add', ['countryflag_display_index', '1', 0]],
 			['config.add', ['countryflag_index_lines', '1', 0]],
 		];
 	}

@@ -18,6 +18,7 @@ use phpbb\user;
 use phpbb\auth\auth;
 use phpbb\language\language;
 use phpbb\extension\manager;
+use Symfony\Component\DependencyInjection\Container;
 
 class country
 {
@@ -51,6 +52,9 @@ class country
 	/** @var \phpbb\extension\manager */
 	protected $ext_manager;
 
+	/** @var \Symfony\Component\DependencyInjection\Container */
+	protected $phpbb_container;
+
 	/** @var string phpBB root path */
 	protected $root_path;
 
@@ -59,6 +63,9 @@ class country
 
 	/** @var string ext path */
 	protected $ext_path;
+
+	/** @var cc_operator */
+	protected $cc_operator;
 
 	/**
 	 * The countryflag database table
@@ -69,7 +76,7 @@ class country
 	/**
 	 * Constructor
 	 */
-	public function __construct(cache_country $cache_country, config $config, cache $cache, db $db, request $request, template $template, user $user, auth $auth, language $language, manager $ext_manager, $root_path, $php_ext, $countryflag_table)
+	public function __construct(cache_country $cache_country, config $config, cache $cache, db $db, request $request, template $template, user $user, auth $auth, language $language, manager $ext_manager, Container $phpbb_container, $root_path, $php_ext, $countryflag_table)
 	{
 		$this->cache_country = $cache_country;
 		$this->config = $config;
@@ -81,6 +88,7 @@ class country
 		$this->auth = $auth;
 		$this->language = $language;
 		$this->ext_manager = $ext_manager;
+		$this->phpbb_container = $phpbb_container;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->countryflag_table = $countryflag_table;
@@ -106,17 +114,17 @@ class country
 				{
 					$img = $this->get_img_anim_list($country_list[$i]['id']);
 					$this->template->assign_block_vars('flags', [
-						'IMG_SRC'		=> $img['image'],
+						'ROW_COUNT'		=> $i,
+						'ROW_ID'		=> $country_list[$i]['id'],
+						'IMAGE'			=> $img['image'],
 						'COUNTRY'		=> $img['country'],
 						'TOTAL'			=> $country_list[$i]['total'],
-						'ROW_COUNT'		=> $i,
 					]);
 				}
 			}
 
-			$this->template->assign_vars([
-				'S_FLAG_LIST_INDEX'		=> true,
-			]);
+			$this->collapse_flags();
+			$this->template->assign_var('S_FLAG_LIST_INDEX', true);
 		}
 	}
 
@@ -226,7 +234,7 @@ class country
 		{
 			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && $this->user->data['user_country_sort'])
 			{
-				$position = ((int) $this->user->data['user_country_sort'] === 1) ? true : false;
+				$position = (bool) ((int) $this->user->data['user_country_sort'] === 1);
 			}
 		}
 		else
@@ -420,10 +428,30 @@ class country
 	 */
 	public function ucp_sort_select($value)
 	{
-		$select = '<option value="0" ' . (($value === 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
-		$select .= '<option value="1" ' . (($value === 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
-		$select .= '<option value="2" ' . (($value === 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
+		$select = '<option value="0" ' . (((int) $value === 0) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_DEFAULT') . '</option>';
+		$select .= '<option value="1" ' . (((int) $value === 1) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_BEFORE') . '</option>';
+		$select .= '<option value="2" ' . (((int) $value === 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
 
 		return $select;
+	}
+
+	/**
+	 * Add the extension collapsiblecategories in flags list
+	 * @return void
+	 * @access private
+	 */
+	private function collapse_flags()
+	{
+		if ($this->phpbb_container->has('phpbb.collapsiblecategories.listener'))
+		{
+			/** @type \phpbb\collapsiblecategories\operator\operator $operator */
+			$operator = $this->phpbb_container->get('phpbb.collapsiblecategories.operator');
+
+			$this->template->assign_vars([
+				'S_COLLAPSE'				=> true,
+				'S_COUNTRYFLAG_HIDDEN'		=> $operator->is_collapsed('countryflag'),
+				'U_COUNTRYFLAG_COLLAPSE'	=> $operator->get_collapsible_link('countryflag'),
+			]);
+		}
 	}
 }
