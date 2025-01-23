@@ -64,9 +64,6 @@ class country
 	/** @var string ext path */
 	protected $ext_path;
 
-	/** @var operator */
-	protected $operator;
-
 	/**
 	 * The countryflag database table
 	 *
