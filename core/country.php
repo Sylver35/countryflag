@@ -64,8 +64,8 @@ class country
 	/** @var string ext path */
 	protected $ext_path;
 
-	/** @var cc_operator */
-	protected $cc_operator;
+	/** @var operator */
+	protected $operator;
 
 	/**
 	 * The countryflag database table
@@ -124,7 +124,9 @@ class country
 			}
 
 			$this->collapse_flags();
-			$this->template->assign_var('S_FLAG_LIST_INDEX', true);
+			$this->template->assign_vars([
+				'S_FLAG_LIST_INDEX'	=> true,
+			]);
 		}
 	}
 
