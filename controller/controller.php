@@ -161,7 +161,7 @@ class controller
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
 			if ((string) $row['code_iso'] === (string) $this->config['countryflag_default'])
 			{
