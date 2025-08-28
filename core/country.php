@@ -99,9 +99,7 @@ class country
 
 		if (is_array($list) && is_array($country_list))
 		{
-			$total = array_column($country_list, 'total');
-			$code_iso = array_column($country_list, 'code_iso');
-			array_multisort($total, SORT_DESC, $code_iso, SORT_ASC, $country_list);
+			array_multisort(array_column($country_list, 'total'), SORT_DESC, array_column($country_list, 'code_iso'), SORT_ASC, $country_list);
 			$nb = (int) $this->config['countryflag_index_lines'] * 7;
 			$nb = ($nb > count($list)) ? count($list) : $nb;
 
@@ -120,7 +118,9 @@ class country
 				}
 			}
 
+			// Add phpbb collapsable categories extension
 			$this->collapse_flags();
+
 			$this->template->assign_vars([
 				'S_FLAG_LIST_INDEX'	=> true,
 			]);
@@ -258,15 +258,8 @@ class country
 		if (isset($country[$user_id]['user_id']))
 		{
 			$lang = $this->get_lang();
-			$flag_anim = sprintf(
-				$this->clean_img('countryflag_img_anim'),
-				$this->ext_path . 'anim/' . $country[$user_id]['code_iso'] . '.gif',
-				$country[$user_id]['country_' . $lang],
-				$country[$user_id]['country_' . $lang] . ' (' . $country[$user_id]['code_iso'] . ')',
-				$this->config['countryflag_width_anim'],
-			);
 			$img = [
-				'image'		=> $flag_anim,
+				'image'		=> sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country[$user_id]['code_iso'] . '.gif', $country[$user_id]['country_' . $lang], $country[$user_id]['country_' . $lang] . ' (' . $country[$user_id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$user_id]['country_' . $lang],
 			];
 		}
@@ -277,7 +270,7 @@ class country
 	/**
 	 * Display anim flag in list
 	 *
-	 * @param (flag id) int $id
+	 * @param int $id
 	 * @return array
 	 * @access public
 	 */
@@ -288,15 +281,8 @@ class country
 		if (isset($country[$id]))
 		{
 			$lang = $this->get_lang();
-			$flag_anim = sprintf(
-				$this->clean_img('countryflag_img_anim'),
-				$this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif',
-				$country[$id]['country_' . $lang],
-				$country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')',
-				$this->config['countryflag_width_anim'],
-			);
 			$img = [
-				'image'		=> $flag_anim,
+				'image'		=> sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]['country_' . $lang], $country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
 				'country'	=> $country[$id]['country_' . $lang],
 			];
 		}
@@ -355,9 +341,9 @@ class country
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
-			if (($row['code_iso'] === $flag) || ($row['code_iso'] === $this->config['countryflag_default']) && !$flag && !$on_profile)
+			if (($row['code_iso'] == $flag) || ($row['code_iso'] == $this->config['countryflag_default']) && !$flag && !$on_profile)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
@@ -398,9 +384,9 @@ class country
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = '';
-			$row['country_fr'] = $this->cache_country->accent_in_country($row['code_iso'], $row['country_fr']);
+			$row['country_fr'] = $this->cache_country->accent($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
-			if ($row['code_iso'] === $flag)
+			if ($row['code_iso'] == $flag)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;

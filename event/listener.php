@@ -109,7 +109,7 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_refresh_cache'])
 		{
 			// Refresh the country users cache now
-			$this->cache_country->destroy_country_users_cache();
+			$this->cache_country->destroy_country_cache();
 		}
 
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
@@ -127,8 +127,6 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 * Display list of country users flag on index
-	 *
-	 * @param array $event
 	 */
 	public function index_modify_page_title()
 	{
@@ -149,12 +147,12 @@ class listener implements EventSubscriberInterface
 		{
 			$id = $event['user_id'];
 			// Get the country users from cache
-			$data = $this->cache_country->country_users();
+			$country = $this->cache_country->country_users();
 			// Do this just for users who have selected country
-			if (isset($data[$id]['user_id']))
+			if (isset($country[$id]['user_id']))
 			{
 				$lang = $this->country->get_lang();
-				$event['username_string'] = $this->country->get_country_img($event['username_string'], $data[$id]['code_iso'], $data[$id]['country_' . $lang]);
+				$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$id]['code_iso'], $country[$id]['country_' . $lang]);
 			}
 		}
 	}

@@ -87,7 +87,7 @@ class cache_country
 		$this->config->set_atomic('countryflag_refresh_cache', 0, 1, false);
 	}
 
-	public function destroy_country_users_cache()
+	public function destroy_country_cache()
 	{
 		// First, destroy cache files
 		$this->cache->destroy('_country_users');
@@ -95,9 +95,12 @@ class cache_country
 		$this->cache->destroy('_country_list_users');
 
 		// Second, reload them
-		$this->country_users();
+		$this->country_users(); 
 		$this->country_list();
 		$this->country_list_users();
+
+		// And reset refresh_cache
+		$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
 	}
 
 	public function country_users()
@@ -147,14 +150,13 @@ class cache_country
 					'user_id'		=> (int) $row['user_id'],
 					'code_iso'		=> (string) $row['code_iso'],
 					'country_en'	=> (string) $row['country_en'],
-					'country_fr'	=> (string) $this->accent_in_country($row['code_iso'], $row['country_fr']),
+					'country_fr'	=> (string) $this->accent($row['code_iso'], $row['country_fr']),
 				];
 			}
 			$this->db->sql_freeresult($result);
 
 			// cache for 7 days
 			$this->cache->put('_country_users', $data, 604800);
-			$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
 		}
 
 		return $country;
@@ -164,7 +166,8 @@ class cache_country
 	{
 		if (($list = $this->cache->get('_country_list')) === false)
 		{
-			$pos = [];
+			$pos = $list = [];
+			// Get the total of users by country
 			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'u.user_id, u.user_country, c.id',
 				'FROM'		=> [USERS_TABLE => 'u'],
@@ -183,7 +186,6 @@ class cache_country
 			}
 			$this->db->sql_freeresult($result);
 
-			$data = [];
 			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'id, code_iso, country_en, country_fr',
 				'FROM'		=> [$this->countryflag_table => ''],
@@ -191,18 +193,18 @@ class cache_country
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$data[$row['id']] = [
+				$list[$row['id']] = [
 					'id'			=> (int) $row['id'],
 					'total'			=> (isset($pos[$row['id']])) ? $pos[$row['id']] : 0,
 					'code_iso'		=> (string) $row['code_iso'],
 					'country_en'	=> (string) $row['country_en'],
-					'country_fr'	=> (string) $this->accent_in_country($row['code_iso'], $row['country_fr']),
+					'country_fr'	=> (string) $this->accent($row['code_iso'], $row['country_fr']),
 				];
 			}
 			$this->db->sql_freeresult($result);
 
 			// cache for 7 days
-			$this->cache->put('_country_list', $data, 604800);
+			$this->cache->put('_country_list', $list, 604800);
 		}
 
 		return $list;
@@ -248,7 +250,7 @@ class cache_country
 	 * @return string
 	 * @access public
 	 */
-	public function accent_in_country($iso, $country)
+	public function accent($iso, $country)
 	{
 		if (in_array($iso, ['ae', 'ec', 'eg', 'er', 'et', 'us']))
 		{
