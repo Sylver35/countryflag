@@ -99,7 +99,7 @@ class country
 
 		if (is_array($list) && is_array($country_list))
 		{
-			array_multisort(array_column($country_list, 'total'), SORT_DESC, array_column($country_list, 'code_iso'), SORT_ASC, $country_list);
+			array_multisort(array_column($country_list, 'total'), SORT_DESC, array_column($country_list, 'code_iso'), SORT_ASC, $country_list, SORT_ASC);
 			$nb = (int) $this->config['countryflag_index_lines'] * 7;
 			$nb = ($nb > count($list)) ? count($list) : $nb;
 

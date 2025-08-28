@@ -105,7 +105,7 @@ class cache_country
 
 	public function country_users()
 	{
-		if (($country = $this->cache->get('_country_users')) === false)
+		if (($data = $this->cache->get('_country_users')) === false)
 		{
 			$pos = [];
 			$sql = $this->db->sql_build_query('SELECT', [
@@ -159,7 +159,7 @@ class cache_country
 			$this->cache->put('_country_users', $data, 604800);
 		}
 
-		return $country;
+		return $data;
 	}
 
 	public function country_list()
