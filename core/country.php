@@ -283,11 +283,12 @@ class country
 	/**
 	 * Display anim flag in list
 	 *
-	 * @param int $id
-	 * @return array
-	 * @access public
+	 * @param int $country
+	 * @param string $lang
+	 * @return string
+	 * @access private
 	 */
-	public function get_img_anim_list($country, $lang)
+	private function get_img_anim_list($country, $lang)
 	{
 		return sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country['code_iso'] . '.gif', $country['country_' . $lang], $country['country_' . $lang] . ' (' . $country['code_iso'] . ')', $this->config['countryflag_width_anim']);
 	}
