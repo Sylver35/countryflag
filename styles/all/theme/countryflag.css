@@ -2,7 +2,7 @@
    By Sylver35  https://breizhcode.com
 ----------------------------------------*/
 
-#user_country_img {
+img.user_country_img {
 	vertical-align: middle;
 }
 
@@ -25,6 +25,10 @@ p.list_flags {
 span.list-flag-item {
 	margin-bottom: 8px;
 	line-height: 1.1rem;
+}
+
+.notification-block img.flag-user {
+	height : auto;
 }
 
 img.flag-user, .notification_list ul li img.flag-user, a.header-avatar img.flag-user, ul li img.flag-user {
