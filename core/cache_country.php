@@ -84,22 +84,17 @@ class cache_country
 
 	public function update_config_refresh()
 	{
+		// Say to refresh cache files later
 		$this->config->set_atomic('countryflag_refresh_cache', 0, 1, false);
 	}
 
 	public function destroy_country_cache()
 	{
-		// First, destroy cache files
+		// Destroy cache files
 		$this->cache->destroy('_country_users');
 		$this->cache->destroy('_country_list');
-		$this->cache->destroy('_country_list_users');
 
-		// Second, reload them
-		$this->country_users(); 
-		$this->country_list();
-		$this->country_list_users();
-
-		// And reset refresh_cache
+		// And reset refresh_cache if needed
 		$this->config->set_atomic('countryflag_refresh_cache', 1, 0, false);
 	}
 
@@ -107,30 +102,9 @@ class cache_country
 	{
 		if (($data = $this->cache->get('_country_users')) === false)
 		{
-			$pos = [];
-			$sql = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'u.user_country, c.id, c.code_iso',
-				'FROM'		=> [USERS_TABLE => 'u'],
-				'LEFT_JOIN'	=> [
-					[
-						'FROM'	=> [$this->countryflag_table => 'c'],
-						'ON'	=> 'c.code_iso = u.user_country',
-					],
-				],
-				'WHERE'		=> "u.user_country <> '0'",
-			]);
-			$result = $this->db->sql_query($sql);
-			while ($row = $this->db->sql_fetchrow($result))
-			{
-				$pos[$row['id']] = (int) (isset($pos[$row['id']])) ? $pos[$row['id']] + 1 : 1;
-			}
-			$this->db->sql_freeresult($result);
-
-			arsort($pos, SORT_NUMERIC);
-			
 			$data = [];
 			$sql_ary = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'u.user_id, u.user_country, c.id, c.code_iso, c.country_en, c.country_fr',
+				'SELECT'	=> 'u.user_id, u.user_country, c.id, c.code_iso, c.country_en, c.country_fr, c.total',
 				'FROM'		=> [USERS_TABLE => 'u'],
 				'LEFT_JOIN'	=> [
 					[
@@ -146,7 +120,7 @@ class cache_country
 			{
 				$data[$row['user_id']] = [
 					'id'			=> (int) $row['id'],
-					'total'			=> (isset($pos[$row['id']])) ? $pos[$row['id']] : 0,
+					'total'			=> (int) $row['total'],
 					'user_id'		=> (int) $row['user_id'],
 					'code_iso'		=> (string) $row['code_iso'],
 					'country_en'	=> (string) $row['country_en'],
@@ -166,40 +140,26 @@ class cache_country
 	{
 		if (($list = $this->cache->get('_country_list')) === false)
 		{
-			$pos = $list = [];
+			$i = 0;
+			$list = [];
 			// Get the total of users by country
 			$sql = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'u.user_id, u.user_country, c.id',
-				'FROM'		=> [USERS_TABLE => 'u'],
-				'LEFT_JOIN'	=> [
-					[
-						'FROM'	=> [$this->countryflag_table => 'c'],
-						'ON'	=> 'c.code_iso = u.user_country',
-					],
-				],
-				'WHERE'		=> "user_country <> '0'",
-			]);
-			$result = $this->db->sql_query($sql);
-			while ($row = $this->db->sql_fetchrow($result))
-			{
-				$pos[$row['id']] = (int) (isset($pos[$row['id']])) ? $pos[$row['id']] + 1 : 1;
-			}
-			$this->db->sql_freeresult($result);
-
-			$sql = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'id, code_iso, country_en, country_fr',
+				'SELECT'	=> 'id, code_iso, country_en, country_fr, total',
 				'FROM'		=> [$this->countryflag_table => ''],
+				'WHERE'		=> 'total > 0',
+				'ORDER_BY'	=> 'total DESC, code_iso ASC',
 			]);
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$list[$row['id']] = [
+				$list[$i] = [
 					'id'			=> (int) $row['id'],
-					'total'			=> (isset($pos[$row['id']])) ? $pos[$row['id']] : 0,
+					'total'			=> (int) $row['total'],
 					'code_iso'		=> (string) $row['code_iso'],
 					'country_en'	=> (string) $row['country_en'],
 					'country_fr'	=> (string) $this->accent($row['code_iso'], $row['country_fr']),
 				];
+				$i++;
 			}
 			$this->db->sql_freeresult($result);
 
@@ -214,7 +174,7 @@ class cache_country
 	{
 		if (($list = $this->cache->get('_country_list_users')) === false)
 		{
-			$pos = [];
+			$list = [];
 			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'u.user_id, u.user_country, c.id',
 				'FROM'		=> [USERS_TABLE => 'u'],
@@ -229,14 +189,13 @@ class cache_country
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$pos[] = (int) $row['id'];
+				$list[] = (int) $row['id'];
 			}
 			$this->db->sql_freeresult($result);
-			
-			$pos = array_unique($pos, SORT_NUMERIC);
+			$list = array_unique($list, SORT_NUMERIC);
 
 			// cache for 7 days
-			$this->cache->put('_country_list_users', $pos, 604800);
+			$this->cache->put('_country_list_users', $list, 604800);
 		}
 
 		return $list;

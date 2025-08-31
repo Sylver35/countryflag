@@ -7,6 +7,10 @@ p.flag-copy {
 	font-size: 1em;
 }
 
+img.user_country_img {
+	vertical-align: middle;
+}
+
 img.flag-user, .notification_list ul li img.flag-user {
 	margin: 0;
 	vertical-align: baseline;

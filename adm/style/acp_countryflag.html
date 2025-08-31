@@ -47,7 +47,7 @@
 		</dl>
 		<dl>
 			<dt><label for="countryflag_default">{{ lang('COUNTRYFLAG_IMAGE') }}{{ lang('COLON') }}</label><br/>{{ lang('COUNTRYFLAG_IMAGE_EXPLAIN') }}</dt>
-			<dd><select id="countryflag_default" name="countryflag_default" title="{{ COUNTRY_FLAG_TITLE }}" onchange="update_flag(this.options[selectedIndex].value,this.options[selectedIndex].text);">{{ S_COUNTRY_FLAG_OPTIONS }}</select>&nbsp;&nbsp;&nbsp;<img src="{{ COUNTRY_FLAG_IMAGE }}" id="user_country_img" alt="{{ COUNTRY_FLAG_TITLE }}" title="{{ COUNTRY_FLAG_TITLE }}" width="22" style="vertical-align:middle;"/></dd>
+			<dd><select id="countryflag_default" name="countryflag_default" title="{{ COUNTRY_FLAG_TITLE }}" onchange="update_flag(this.options[selectedIndex].value,this.options[selectedIndex].text);">{{ S_COUNTRY_FLAG_OPTIONS }}</select>&nbsp;&nbsp;&nbsp;<img src="{{ COUNTRY_FLAG_IMAGE }}" id="user_country_img" class="user_country_img" alt="{{ COUNTRY_FLAG_TITLE }}" title="{{ COUNTRY_FLAG_TITLE }}" width="22"></dd>
 		</dl>
 		<dl>
 			<dt><label for="countryflag_width">{{ lang('COUNTRYFLAG_WIDTH') }}{{ lang('COLON') }}</label><br/><span>{{ lang('COUNTRYFLAG_WIDTH_EXPLAIN') }}</span></dt>

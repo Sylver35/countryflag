@@ -94,31 +94,31 @@ class country
 
 	public function display_list_on_index()
 	{
-		$list = $this->cache_country->country_list_users();
+		// All countries in the row are already ranked by total users
 		$country_list = $this->cache_country->country_list();
 
-		if (is_array($list) && is_array($country_list))
+		if (is_array($country_list))
 		{
-			array_multisort(array_column($country_list, 'total'), SORT_DESC, array_column($country_list, 'code_iso'), SORT_ASC, $country_list, SORT_ASC);
-			$nb = (int) $this->config['countryflag_index_lines'] * 7;
-			$nb = ($nb > count($list)) ? count($list) : $nb;
-
+			$lang = $this->get_lang();
+			$max = ($this->config['countryflag_index_lines'] * 7) - 1;
+			$nb = count($country_list);
 			for ($i = 0; $i < $nb; $i++)
 			{
-				if (isset($country_list[$i]) && in_array($country_list[$i]['id'], $list))
+				if ($i > $max)
 				{
-					$img = $this->get_img_anim_list($country_list[$i]['id']);
-					$this->template->assign_block_vars('flags', [
-						'ROW_COUNT'		=> $i,
-						'ROW_ID'		=> $country_list[$i]['id'],
-						'IMAGE'			=> $img['image'],
-						'COUNTRY'		=> $img['country'],
-						'TOTAL'			=> $country_list[$i]['total'],
-					]);
+					break;
 				}
+
+				$this->template->assign_block_vars('flags', [
+					'ROW_COUNT'		=> $i,
+					'ROW_ID'		=> $country_list[$i]['id'],
+					'IMAGE'			=> $this->get_img_anim_list($country_list[$i], $lang),
+					'COUNTRY'		=> $country_list[$i]['country_' . $lang],
+					'TOTAL'			=> $country_list[$i]['total'],
+				]);
 			}
 
-			// Add phpbb collapsable categories extension
+			// Add phpbb collapsable categories ext
 			$this->collapse_flags();
 
 			$this->template->assign_vars([
@@ -194,7 +194,20 @@ class country
 			$this->config['countryflag_width'],
 		);
 
-		// Display the flag before or after username
+		return $this->username_flag($username, $flag, $position);
+	}
+
+	/**
+	 * Display the flag before or after username
+	 *
+	 * @param string $username
+	 * @param string $flag
+	 * @param bool $position
+	 * @return string
+	 * @access private
+	 */
+	private function username_flag($username, $flag, $position)
+	{
 		if ($this->get_position($position))
 		{
 			$username = $flag . $this->language->lang('COUNTRYFLAG_SEPARATE') . $username;
@@ -274,20 +287,9 @@ class country
 	 * @return array
 	 * @access public
 	 */
-	public function get_img_anim_list($id)
+	public function get_img_anim_list($country, $lang)
 	{
-		$img = ['image' => '', 'country' => ''];
-		$country = $this->cache_country->country_list();
-		if (isset($country[$id]))
-		{
-			$lang = $this->get_lang();
-			$img = [
-				'image'		=> sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country[$id]['code_iso'] . '.gif', $country[$id]['country_' . $lang], $country[$id]['country_' . $lang] . ' (' . $country[$id]['code_iso'] . ')', $this->config['countryflag_width_anim']),
-				'country'	=> $country[$id]['country_' . $lang],
-			];
-		}
-
-		return $img;
+		return sprintf($this->clean_img('countryflag_img_anim'), $this->ext_path . 'anim/' . $country['code_iso'] . '.gif', $country['country_' . $lang], $country['country_' . $lang] . ' (' . $country['code_iso'] . ')', $this->config['countryflag_width_anim']);
 	}
 
 	/**
@@ -295,24 +297,24 @@ class country
 	 *
 	 * @param array $event
 	 * @param bool $on_acp
-	 * @param bool $on_profile
 	 * @return void
 	 * @access public
 	 */
-	public function add_country($event, $on_acp, $on_profile)
+	public function add_country($event, $on_acp)
 	{
-		if (!$on_acp)
+		if ($on_acp)
 		{
-			$this->on_select_flag($event['data']['user_country'], $on_profile);
+			$this->on_select_flag_acp($event['data']['user_country']);
 		}
 		else
 		{
-			$this->on_select_flag_acp($event['data']['user_country']);
+			$this->on_select_flag($event['data']['user_country']);
 		}
 
 		$this->template->assign_vars([
 			'ERROR_COUNTRY'				=> (!$on_acp && empty($event['data']['user_country']) && $this->config['countryflag_required']) ? $this->language->lang('COUNTRY_ERROR') : '',
 			'COUNTRY_FLAG_REQUIRED'		=> $this->config['countryflag_required'] ? ' *' : '',
+			'COUNTRY_FLAG_EX'			=> isset($event['data']['ex_user_country']) ? $event['data']['ex_user_country'] : '',
 			'S_COUNTRY_FLAG_ACTIVE'		=> true,
 		]);
 	}
@@ -321,11 +323,10 @@ class country
 	 * Build select country flag
 	 *
 	 * @param string $flag
-	 * @param bool $on_profile
 	 * @return void
 	 * @access private
 	 */
-	private function on_select_flag($flag, $on_profile)
+	private function on_select_flag($flag)
 	{
 		$flag_image = '0';
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
@@ -343,7 +344,7 @@ class country
 			$selected = '';
 			$row['country_fr'] = $this->cache_country->accent($row['code_iso'], $row['country_fr']);
 			$country = $row['country_' . $sort] . ' (' . $row['code_iso'] . ')';
-			if (($row['code_iso'] == $flag) || ($row['code_iso'] == $this->config['countryflag_default']) && !$flag && !$on_profile)
+			if (($row['code_iso'] == $flag) || ($row['code_iso'] == $this->config['countryflag_default']) && !$flag)
 			{
 				$selected = ' selected="selected"';
 				$title = $country;
@@ -418,6 +419,69 @@ class country
 		$select .= '<option value="2" ' . (((int) $value === 2) ? ' selected="selected"' : '') . '>' . $this->language->lang('COUNTRYFLAG_SELECT_AFTER') . '</option>';
 
 		return $select;
+	}
+
+	/**
+	 * Decrement/increment total users for country if needed
+	 * Since 1.8.2 version
+	 *
+	 * @param int $user_id
+	 * @param string $user_country
+	 * @param string $ex_user_country
+	 */
+	public function change_country($user_id, $user_country, $ex_user_country)
+	{
+		if ($user_country != $ex_user_country)
+		{
+			$this->decrement_country($user_id, $ex_user_country);
+			$this->increment_country($user_id, $user_country);
+		}
+	}
+
+	/**
+	 * Decrement total users for a country
+	 * Since 1.8.2 version
+	 *
+	 * @param int $user_id
+	 * @param string $user_country
+	 */
+	public function decrement_country($user_id, $user_country = '')
+	{
+		$country = $this->cache_country->country_users();
+		if ($user_country)
+		{
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total - 1 WHERE code_iso = '{$user_country}'");
+		}
+		else if (isset($country[$user_id]['user_id']))
+		{
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total - 1 WHERE id = ' . $country[$user_id]['id']);
+		}
+
+		// Say to refresh the country users cache after update
+		$this->cache_country->destroy_country_cache();
+	}
+
+	/**
+	 * Increment total users for a country
+	 * Since 1.8.2 version
+	 *
+	 * @param int $user_id
+	 * @param string $user_country
+	 */
+	public function increment_country($user_id, $user_country = '')
+	{
+		$country = $this->cache_country->country_users();
+		if ($user_country)
+		{
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total + 1 WHERE code_iso = '{$user_country}'");
+		}
+		else if (isset($country[$user_id]['user_id']))
+		{
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total + 1 WHERE id = ' . $country[$user_id]['id']);
+		}
+
+		// Say to refresh the country users cache after update
+		$this->cache_country->destroy_country_cache();
 	}
 
 	/**

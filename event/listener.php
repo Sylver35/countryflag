@@ -70,19 +70,20 @@ class listener implements EventSubscriberInterface
 			'core.viewtopic_modify_post_row'					=> 'viewtopic_post_row_img_anim',
 			'core.viewtopic_cache_user_data'					=> 'viewtopic_cache_user_data',
 			'core.ucp_pm_view_messsage'							=> 'ucp_pm_view_messsage',
-			'core.ucp_profile_modify_profile_info'				=> 'user_country_profile',
+			'core.ucp_profile_modify_profile_info'				=> 'ucp_profile_modify_profile_info',
 			'core.ucp_profile_validate_profile_info'			=> 'user_profile_validate',
 			'core.ucp_profile_info_modify_sql_ary'				=> 'user_profile_sql_ary',
-			'core.ucp_register_data_before'						=> 'user_country_profile_register',
-			'core.ucp_register_data_after'						=> 'user_register_validate',
+			'core.ucp_register_data_before'						=> 'ucp_register_data_before',
+			'core.ucp_register_data_after'						=> 'ucp_register_data_after',
 			'core.ucp_register_user_row_after'					=> 'ucp_register_user_row_after',
-			'core.ucp_register_register_after'					=> 'update_config_refresh',
-			'core.ucp_register_agreement_modify_template_data' 	=> 'ucp_register_agreement_country',
+			'core.ucp_register_register_after'					=> 'ucp_register_register_after',
+			'core.ucp_register_agreement_modify_template_data' 	=> 'ucp_register_agreement_modify_template_data',
 			'core.ucp_prefs_personal_data'						=> 'ucp_prefs_personal_data',
 			'core.ucp_prefs_personal_update_data'				=> 'ucp_prefs_personal_update_data',
-			'core.acp_users_modify_profile'						=> 'acp_user_country_profile',
-			'core.acp_users_profile_modify_sql_ary'				=> 'user_profile_sql_ary',
-			'core.acp_users_profile_validate'					=> 'update_config_refresh',
+			'core.acp_users_modify_profile'						=> 'acp_users_modify_profile',
+			'core.acp_users_profile_modify_sql_ary'				=> 'acp_users_profile_modify_sql_ary',
+			'core.acp_users_profile_validate'					=> 'acp_users_profile_validate',
+			'core.delete_user_after'							=> 'delete_user_after',
 		];
 	}
 
@@ -100,15 +101,15 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Automatic refresh the country users cache if needed
+	 * Automatic refresh the country cache if needed
 	 * Create URL and display message to user if needed
 	 */
 	public function page_header_after()
 	{
-		// If country users must be updated
+		// If country must be updated
 		if ($this->config['countryflag_refresh_cache'])
 		{
-			// Refresh the country users cache now
+			// Refresh the country cache now
 			$this->cache_country->destroy_country_cache();
 		}
 
@@ -145,14 +146,13 @@ class listener implements EventSubscriberInterface
 	{
 		if ($event['mode'] == 'full' || $event['mode'] == 'no_profile')
 		{
-			$id = $event['user_id'];
 			// Get the country users from cache
 			$country = $this->cache_country->country_users();
 			// Do this just for users who have selected country
-			if (isset($country[$id]['user_id']))
+			if (isset($country[$event['user_id']]['user_id']))
 			{
 				$lang = $this->country->get_lang();
-				$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$id]['code_iso'], $country[$id]['country_' . $lang]);
+				$event['username_string'] = $this->country->get_country_img($event['username_string'], $country[$event['user_id']]['code_iso'], $country[$event['user_id']]['country_' . $lang]);
 			}
 		}
 	}
@@ -162,25 +162,13 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param array $event
 	 */
-	public function user_country_profile($event)
+	public function ucp_profile_modify_profile_info($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $this->user->data['user_country']),
+			'user_country'		=> $this->request->variable('user_country', $this->user->data['user_country']),
+			'ex_user_country'	=> $this->request->variable('ex_user_country', $this->user->data['user_country']),
 		]);
-		$this->country->add_country($event, false, true);
-	}
-
-	/**
-	 * Add country select in register form
-	 *
-	 * @param array $event
-	 */
-	public function user_country_profile_register($event)
-	{
-		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', ''),
-		]);
-		$this->country->add_country($event, false, false);
+		$this->country->add_country($event, false);
 	}
 
 	/**
@@ -188,16 +176,45 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param array $event
 	 */
-	public function acp_user_country_profile($event)
+	public function acp_users_modify_profile($event)
 	{
 		$event['data'] = array_merge($event['data'], [
-			'user_country'	=> $this->request->variable('user_country', $event['user_row']['user_country']),
+			'user_country'		=> $this->request->variable('user_country', $event['user_row']['user_country']),
+			'ex_user_country'	=> $this->request->variable('ex_user_country', $event['user_row']['user_country']),
 		]);
-		$this->country->add_country($event, true, false);
+		$this->country->add_country($event, true);
 	}
 
 	/**
-	 * Add user country in sql ary
+	 * Update acp user data
+	 *
+	 * @param array $event
+	 */
+	public function acp_users_profile_validate($event)
+	{
+		if (empty($event['data']['user_country']) && $this->config['countryflag_required'])
+		{
+			$error = $event['error'];
+			$error[] = $this->language->lang('COUNTRY_ERROR');
+			$event['error'] = $error;
+		}
+	}
+
+	/**
+	 * Add user country in sql ary in acp
+	 *
+	 * @param array $event
+	 */
+	public function acp_users_profile_modify_sql_ary($event)
+	{
+		$event['sql_ary'] = array_merge($event['sql_ary'], [
+			'user_country'	=> $event['data']['user_country'],
+		]);
+		$this->country->change_country($event['user_id'], $event['data']['user_country'], $event['data']['ex_user_country']);
+	}
+
+	/**
+	 * Modify profile data in UCP before submitting
 	 *
 	 * @param array $event
 	 */
@@ -206,6 +223,7 @@ class listener implements EventSubscriberInterface
 		$event['sql_ary'] = array_merge($event['sql_ary'], [
 			'user_country'	=> $event['data']['user_country'],
 		]);
+		$this->country->change_country($this->user->data['user_id'], $event['data']['user_country'], $event['data']['ex_user_country']);
 	}
 
 	/**
@@ -221,11 +239,31 @@ class listener implements EventSubscriberInterface
 			$error[] = $this->language->lang('COUNTRY_ERROR');
 			$event['error'] = $error;
 		}
-		else if ($event['submit'])
-		{
-			// Say to refresh the country users cache after update
-			$this->cache_country->update_config_refresh();
-		}
+	}
+
+	/**
+	 * Add country select in register form
+	 *
+	 * @param array $event
+	 */
+	public function ucp_register_data_before($event)
+	{
+		$event['data'] = array_merge($event['data'], [
+			'user_country'	=> $this->request->variable('user_country', ''),
+		]);
+		$this->country->add_country($event, false);
+	}
+
+	/**
+	 * Update registration data
+	 *
+	 * @param array $event
+	 */
+	public function ucp_register_user_row_after($event)
+	{
+		$event['user_row'] = array_merge($event['user_row'], [
+			'user_country'	=> $this->request->variable('user_country', ''),
+		]);
 	}
 
 	/**
@@ -233,7 +271,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param array $event
 	 */
-	public function user_register_validate($event)
+	public function ucp_register_data_after($event)
 	{
 		if ($event['submit'] && empty($event['data']['user_country']) && $this->config['countryflag_required'])
 		{
@@ -241,11 +279,68 @@ class listener implements EventSubscriberInterface
 			$error[] = $this->language->lang('COUNTRY_ERROR_REGISTER');
 			$event['error'] = $error;
 		}
-		else if ($event['submit'])
+	}
+
+	/**
+	 * Increment the country
+	 *
+	 * @param array $event
+	 */
+	public function ucp_register_register_after($event)
+	{
+		if (isset($event['data']['user_country']) && $event['data']['user_country'])
 		{
-			// Say to refresh the country users cache after update
-			$this->cache_country->update_config_refresh();
+			$this->country->increment_country($event['user_id'], $event['data']['user_country']);
 		}
+	}
+
+	/**
+	 * Add user country in hidden fields of registration form in case of change lang
+	 *
+	 * @param array $event
+	 */
+	public function ucp_register_agreement_modify_template_data($event)
+	{
+		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], [
+			'user_country'	=> $this->request->variable('user_country', ''),
+		]);
+	}
+
+	/**
+	 * Add position of flag in prefs personal data
+	 *
+	 * @param array $event
+	 */
+	public function ucp_prefs_personal_data($event)
+	{
+		if ($data = $this->user->data['user_country'])
+		{
+			$username = '<span class="username-coloured" style="color: #' . $this->user->data['user_colour'] . ';">' . $this->user->data['username'] . '</span>';
+
+			$event['data'] = array_merge($event['data'], [
+				'user_country_sort'	=> $this->request->variable('user_country_sort', $this->user->data['user_country_sort']),
+			]);
+
+			$this->template->assign_vars([
+				'COUNTRY_SELECT'	=> $this->country->ucp_sort_select((int) $event['data']['user_country_sort']),
+				'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $data, $data, ($this->config['countryflag_position'] ? 'left' : 'right')),
+				'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $data, $data, 'left'),
+				'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $data, $data, 'right'),
+				'COUNTRY_CHOICE'	=> $this->user->data['user_country_sort'],
+			]);
+		}
+	}
+
+	/**
+	 * Update prefs personal data
+	 *
+	 * @param array $event
+	 */
+	public function ucp_prefs_personal_update_data($event)
+	{
+		$event['sql_ary'] = array_merge($event['sql_ary'], [
+			'user_country_sort'	=> $event['data']['user_country_sort'],
+		]);
 	}
 
 	/**
@@ -324,74 +419,18 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Update registration data
+	 * Decrement total users for a country
 	 *
 	 * @param array $event
 	 */
-	public function ucp_register_user_row_after($event)
+	public function delete_user_after($event)
 	{
-		$event['user_row'] = array_merge($event['user_row'], [
-			'user_country'	=> $this->request->variable('user_country', ''),
-		]);
-	}
-
-	/**
-	 * Update cache after add or change country
-	 */
-	public function update_config_refresh()
-	{
-		// Say to refresh the country users cache after update
-		$this->cache_country->update_config_refresh();
-	}
-
-	/**
-	 * Add user country in hidden fields of registration form
-	 *
-	 * @param array $event
-	 */
-	public function ucp_register_agreement_country($event)
-	{
-		$event['s_hidden_fields'] = array_merge($event['s_hidden_fields'], [
-			'user_country'	=> $this->request->variable('user_country', ''),
-		]);
-	}
-
-	/**
-	 * Add position of flag in prefs personal data
-	 * Since 1.4.0 version
-	 *
-	 * @param array $event
-	 */
-	public function ucp_prefs_personal_data($event)
-	{
-		if ($data = $this->user->data['user_country'])
+		if ($event['mode'] == 'remove')
 		{
-			$username = '<span class="username-coloured" style="color: #' . $this->user->data['user_colour'] . ';">' . $this->user->data['username'] . '</span>';
-
-			$event['data'] = array_merge($event['data'], [
-				'user_country_sort'	=> $this->request->variable('user_country_sort', $this->user->data['user_country_sort']),
-			]);
-
-			$this->template->assign_vars([
-				'COUNTRY_SELECT'	=> $this->country->ucp_sort_select((int) $event['data']['user_country_sort']),
-				'COUNTRY_NAME_0'	=> $this->country->get_country_img($username, $data, $data, ($this->config['countryflag_position'] ? 'left' : 'right')),
-				'COUNTRY_NAME_1'	=> $this->country->get_country_img($username, $data, $data, 'left'),
-				'COUNTRY_NAME_2'	=> $this->country->get_country_img($username, $data, $data, 'right'),
-				'COUNTRY_CHOICE'	=> $this->user->data['user_country_sort'],
-			]);
+			foreach ($event['user_ids'] as $user_id)
+			{
+				$this->country->decrement_country($user_id);
+			}
 		}
-	}
-
-	/**
-	 * Update prefs personal data
-	 * Since 1.4.0 version
-	 *
-	 * @param array $event
-	 */
-	public function ucp_prefs_personal_update_data($event)
-	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], [
-			'user_country_sort'	=> $event['data']['user_country_sort'],
-		]);
 	}
 }
