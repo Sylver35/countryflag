@@ -19,7 +19,20 @@ class main_module
 	/** @var string */
 	public $tpl_name;
 
-	public function main()
+	/** @var int */
+	public $id;
+
+	/** @var string */
+	public $mode;
+
+	/**
+	 * @param int		$id
+	 * @param string	$mode
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function main($id, $mode)
 	{
 		global $phpbb_container;
 
@@ -38,8 +51,20 @@ class main_module
 
 		$this->tpl_name = 'acp_countryflag';
 		$this->page_title = $language->lang('COUNTRYFLAG_TITLE');
+		
+		switch ($mode)
+		{
+			case 'config':
+				$admin_controller->acp_config_countryflag();
+			break;
 
-		$admin_controller->acp_config_countryflag();
+			case 'update':
+				$admin_controller->acp_country_total();
+			break;
+
+			default:
+				trigger_error('NO_MODE', E_USER_ERROR);
+		}
 
 		$template->assign_var('U_ACTION', $this->u_action);
 	}

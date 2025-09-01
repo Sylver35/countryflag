@@ -94,7 +94,7 @@ class country
 
 	public function display_list_on_index()
 	{
-		// All countries in the row are already ranked by total users
+		// All countries in the cache file are already ranked by total users
 		$country_list = $this->cache_country->country_list();
 
 		if (is_array($country_list))
@@ -225,9 +225,9 @@ class country
 	 *
 	 * @param string $img
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function clean_img($img)
+	public function clean_img($img)
 	{
 		return str_replace(['\\', '&quot;', '""'], ['', '"', '"'], $this->config[$img]);
 	}
@@ -283,7 +283,7 @@ class country
 	/**
 	 * Display anim flag in list
 	 *
-	 * @param int $country
+	 * @param array $country
 	 * @param string $lang
 	 * @return string
 	 * @access private
@@ -424,11 +424,11 @@ class country
 
 	/**
 	 * Decrement/increment total users for country if needed
-	 * Since 1.8.2 version
 	 *
 	 * @param int $user_id
 	 * @param string $user_country
 	 * @param string $ex_user_country
+	 * @access public
 	 */
 	public function change_country($user_id, $user_country, $ex_user_country)
 	{
@@ -441,48 +441,56 @@ class country
 
 	/**
 	 * Decrement total users for a country
-	 * Since 1.8.2 version
 	 *
 	 * @param int $user_id
 	 * @param string $user_country
+	 * @access public
 	 */
 	public function decrement_country($user_id, $user_country = '')
 	{
-		$country = $this->cache_country->country_users();
 		if ($user_country)
 		{
 			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total - 1 WHERE code_iso = '{$user_country}'");
+			// Say to refresh the country users cache after
+			$this->cache_country->update_config_refresh();
 		}
-		else if (isset($country[$user_id]['user_id']))
+		else 
 		{
-			$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total - 1 WHERE id = ' . $country[$user_id]['id']);
+			$country = $this->cache_country->country_users();
+			if (isset($country[$user_id]['user_id']))
+			{
+				$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total - 1 WHERE id = ' . $country[$user_id]['id']);
+				// Say to refresh the country users cache after
+				$this->cache_country->update_config_refresh();
+			}
 		}
-
-		// Say to refresh the country users cache after update
-		$this->cache_country->destroy_country_cache();
 	}
 
 	/**
 	 * Increment total users for a country
-	 * Since 1.8.2 version
 	 *
 	 * @param int $user_id
 	 * @param string $user_country
+	 * @access public
 	 */
 	public function increment_country($user_id, $user_country = '')
 	{
-		$country = $this->cache_country->country_users();
 		if ($user_country)
 		{
 			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total + 1 WHERE code_iso = '{$user_country}'");
+			// Say to refresh the country users cache after
+			$this->cache_country->update_config_refresh();
 		}
-		else if (isset($country[$user_id]['user_id']))
+		else 
 		{
-			$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total + 1 WHERE id = ' . $country[$user_id]['id']);
+			$country = $this->cache_country->country_users();
+			if (isset($country[$user_id]['user_id']))
+			{
+				$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total + 1 WHERE id = ' . $country[$user_id]['id']);
+				// Say to refresh the country users cache after
+				$this->cache_country->update_config_refresh();
+			}
 		}
-
-		// Say to refresh the country users cache after update
-		$this->cache_country->destroy_country_cache();
 	}
 
 	/**

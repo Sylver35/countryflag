@@ -39,6 +39,15 @@ class countryflag_1_8_3 extends migration
 			// Set NEWLY_REGISTERED permission for add country in profile
 			['permission.permission_set', ['NEWLY_REGISTERED', ['u_chgprofileinfo'], 'group']],
 
+			// Add hidden module
+			['module.add', ['acp', 'ACP_COUNTRYFLAG_MODULE', [
+				'module_display'	=> 0,
+				'module_basename'	=> '\sylver35\countryflag\acp\main_module',
+				'module_langname'	=> 'ACP_COUNTRYFLAG_UPDATE',
+				'module_mode'		=> 'update',
+				'module_auth'		=> 'ext_sylver35/countryflag && acl_a_board',
+			]]],
+
 			// Custon function
 			['custom', [[&$this, 'add_total_users']]],
 		];
@@ -68,7 +77,7 @@ class countryflag_1_8_3 extends migration
 					'ON'	=> 'c.code_iso = u.user_country',
 				],
 			],
-			'WHERE'		=> "user_country <> '0'",
+			'WHERE'		=> "u.user_country <> '0'",
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))

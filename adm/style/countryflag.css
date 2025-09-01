@@ -11,6 +11,16 @@ img.user_country_img {
 	vertical-align: middle;
 }
 
+span.flag-error {
+	color: red;
+	font-weight: bold;
+}
+
+span.flag-good {
+	color: green;
+	font-weight: bold;
+}
+
 img.flag-user, .notification_list ul li img.flag-user {
 	margin: 0;
 	vertical-align: baseline;

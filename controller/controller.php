@@ -126,31 +126,69 @@ class controller
 		else
 		{
 			$meta = $this->country->get_version();
+			// Add the select flag
 			$this->config_select_flag();
+
+			// Verify if total users by country are good
+			$error = $this->verify_total_users();
+
 			$this->template->assign_vars([
 				'COUNTRYFLAG_REQUIRED'			=> (bool) $this->config['countryflag_required'],
 				'COUNTRYFLAG_MESSAGE'			=> (bool) $this->config['countryflag_message'],
 				'COUNTRYFLAG_REDIRECT'			=> (bool) $this->config['countryflag_redirect'],
 				'COUNTRYFLAG_POSITION'			=> (bool) $this->config['countryflag_position'],
-				'COUNTRYFLAG_WIDTH'				=> (int) $this->config['countryflag_width'],
-				'COUNTRYFLAG_WIDTH_ANIM'		=> (int) $this->config['countryflag_width_anim'],
 				'COUNTRYFLAG_DISPLAY_TOPIC'		=> (bool) $this->config['countryflag_display_topic'],
 				'COUNTRYFLAG_DISPLAY_PM'		=> (bool) $this->config['countryflag_display_pm'],
 				'COUNTRYFLAG_DISPLAY_MEMBERLIST'=> (bool) $this->config['countryflag_display_memberlist'],
 				'COUNTRYFLAG_DISPLAY_INDEX'		=> (bool) $this->config['countryflag_display_index'],
+				'COUNTRYFLAG_WIDTH'				=> (int) $this->config['countryflag_width'],
+				'COUNTRYFLAG_WIDTH_ANIM'		=> (int) $this->config['countryflag_width_anim'],
 				'COUNTRYFLAG_INDEX_LINES'		=> (int) $this->config['countryflag_index_lines'],
+				'COUNTRYFLAG_ERROR_TOTAL'		=> ($error) ? implode('<br>', $error) : '',
+				'U_ACTION_TOTAL'				=> str_replace('mode=config', 'mode=update', $this->u_action),
 				'COUNTRYFLAG_COPY'				=> $this->language->lang('COUNTRYFLAG_COPY', $meta['homepage'], $meta['version']),
 			]);
+		}
+	}
+
+	public function acp_country_total()
+	{
+		$form_key = 'acp_countryflag';
+		add_form_key($form_key);
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key($form_key))
+			{
+				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link(str_replace('mode=update', 'mode=config', $this->u_action)), E_USER_WARNING);
+			}
+
+			// In first, set to 0 all total countries
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = 0 WHERE total > 0');
+
+			// Second, get all total and update...
+			$list = $this->get_total_users();
+
+			foreach ($list as $id => $total)
+			{
+				$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = ' . (int) $total . ' WHERE id = ' . (int) $id);
+			}
+
+			// Reload cache files now
+			$this->cache_country->destroy_country_cache();
+
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_UPDATE_TOTAL_COUNTRY', time());
+			trigger_error($this->language->lang('COUNTRYFLAG_UPDATE_TOTAL') . adm_back_link(str_replace('mode=update', 'mode=config', $this->u_action)));
 		}
 	}
 
 	private function config_select_flag()
 	{
 		$flag_image = '0';
+		$tab = '				';
 		$sort = $this->country->get_lang();
 		$title = $this->language->lang('COUNTRYFLAG_SORT_FLAG');
 		$select = (!$this->config['countryflag_default']) ? ' selected="selected"' : '';
-		$flag_options = '<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
+		$flag_options = "\n" . $tab .'<option value="0" title="' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . '"' . $select . '> ' . $this->language->lang('COUNTRYFLAG_SORT_FLAG') . "</option>\n";
 
 		$sql = [
 			'SELECT'	=> 'id, code_iso, country_en, country_fr',
@@ -169,7 +207,7 @@ class controller
 				$title = $country;
 				$flag_image = $row['code_iso'];
 			}
-			$flag_options .= '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row['country_' . $sort] . "</option>\n";
+			$flag_options .= $tab . '<option value="' . $row['code_iso'] . '" title="' . $country . '"' . $selected . '>' . $row['country_' . $sort] . "</option>\n";
 		}
 		$this->db->sql_freeresult($result);
 
@@ -179,6 +217,105 @@ class controller
 			'COUNTRY_FLAG_TITLE'		=> $title,
 			'S_COUNTRY_FLAG_OPTIONS'	=> $flag_options,
 		]);
+	}
+
+	private function verify_total_users()
+	{
+		$error = [];
+		$lang = $this->country->get_lang();
+		$list = $this->get_total_users_row();
+
+		$sql = 'SELECT id, code_iso, country_en, country_fr, total 
+			FROM ' . $this->countryflag_table;
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			if (!isset($list[$row['id']]) && ($row['total'] == 0))
+			{
+				continue;
+			}
+			else if (!isset($list[$row['id']]) && ($row['total'] > 0))
+			{
+				$country = $this->country_img($row['code_iso'], $row['country_' . $lang]);
+				$error[] = $this->language->lang('COUNTRYFLAG_UPDATE_FLAG', $row['total'], $country, $row['country_' . $lang], 0);
+			}
+			else if ($list[$row['id']]['total'] != $row['total'])
+			{
+				$country = $this->country_img($row['code_iso'], $row['country_' . $lang]);
+				$error[] = $this->language->lang('COUNTRYFLAG_UPDATE_FLAG', $row['total'], $country, $row['country_' . $lang], $list[$row['id']]['total']);
+			}
+		}
+		$this->db->sql_freeresult($result);
+
+		return $error;
+	}
+
+	private function get_total_users()
+	{
+		$list = [];
+		// Get the total of users by country
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'u.user_id, u.user_country, c.id',
+			'FROM'		=> [USERS_TABLE => 'u'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->countryflag_table => 'c'],
+					'ON'	=> 'c.code_iso = u.user_country',
+				],
+			],
+			'WHERE'		=> "u.user_country <> '0'",
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			// Initialise to 1 or increment
+			$list[$row['id']] = (isset($list[$row['id']])) ? $list[$row['id']] + 1 : 1;
+		}
+		$this->db->sql_freeresult($result);
+
+		return $list;
+	}
+
+	private function get_total_users_row()
+	{
+		$list = [];
+		// Get the total of users by country
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'u.user_id, u.user_country, c.id',
+			'FROM'		=> [USERS_TABLE => 'u'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->countryflag_table => 'c'],
+					'ON'	=> 'c.code_iso = u.user_country',
+				],
+			],
+			'WHERE'		=> "u.user_country <> '0'",
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$list[$row['id']] = [
+				'id'		=> $row['id'],
+				'total'		=> (isset($list[$row['id']])) ? $list[$row['id']]['total'] + 1 : 1,
+			];
+		}
+		$this->db->sql_freeresult($result);
+
+		return $list;
+	}
+
+	public function country_img($iso, $country)
+	{
+		$flag = sprintf(
+			$this->country->clean_img('countryflag_img'),
+			$this->ext_path . 'flags/' . $iso . '.png',
+			$country,
+			$country . ' (' . $iso . ')',
+			'flag-user flag-14',
+			14,
+		);
+
+		return $flag;
 	}
 
 	private function update_config($data)

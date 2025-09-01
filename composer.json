@@ -4,7 +4,7 @@
     "description": "Breizh Country Flag Extension for phpBB. Allows users to enter their Country and display the flag wherever possible with the username",
     "homepage": "https://breizhcode.com",
     "version": "1.8.3",
-    "time": "2025-08-31",
+    "time": "2025-09-01",
     "keywords": ["phpbb", "extension", "country", "flag", "user", "breizh"],
     "license": "GPL-2.0-only",
     "authors": [{

@@ -37,8 +37,11 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'COUNTRYFLAG'						=> 'Pays',
 	'ACP_COUNTRYFLAG_MODULE'			=> 'Drapeaux des pays',
 	'ACP_COUNTRYFLAG_CONFIG'			=> 'Configuration',
+	'ACP_COUNTRYFLAG_UPDATE'			=> 'Mise à jour total',
+	'COUNTRYFLAG_USER'					=> 'Drapeau du pays de l’utilisateur',
 	'COUNTRYFLAG_TITLE'					=> 'Configuration des drapeaux des pays',
 	'COUNTRYFLAG_TITLE_EXPLAIN'			=> 'Réglages des paramètres des drapeaux des membres',
 	'COUNTRYFLAG_REQUIRE'				=> 'Exiger le drapeau du membre',
@@ -53,7 +56,7 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_SELECT_DEFAULT'		=> 'Réglage sélectionné par défaut',
 	'COUNTRYFLAG_SELECT_BEFORE'			=> 'Avant les noms d’utilisateurs',
 	'COUNTRYFLAG_SELECT_AFTER'			=> 'Après les noms d’utilisateurs',
-	'COUNTRYFLAG_SEPARATE'				=> ' ', // Be careful : only non-breaking space here, don't touch
+	'COUNTRYFLAG_SEPARATE'				=> ' ', // Be careful! : only non-breaking space here, don't touch
 	'COUNTRYFLAG_CHGPROFILEINFO'		=> 'Vous n’avez pas la permission de modifier votre profil et ne pouvez donc pas renseigner votre pays.<br>Contactez un administrateur pour y remédier.',
 	'COUNTRYFLAG_BEFORE'				=> 'avant',
 	'COUNTRYFLAG_AFTER'					=> 'après',
@@ -65,7 +68,7 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_INDEX_EXPLAIN'			=> 'Choisissez si vous souhaitez afficher la liste des pays choisis par les utilisateurs sur l’index',
 	'COUNTRYFLAG_LINE'					=> 'ligne',
 	'COUNTRYFLAG_LINES'					=> 'lignes',
-	'COUNTRYFLAG_INDEX_LINES'			=> '&rdca; Nombre de lignes',
+	'COUNTRYFLAG_INDEX_LINES'			=> 'Nombre de lignes',
 	'COUNTRYFLAG_INDEX_LINES_EXPLAIN'	=> '&rdca; Choisissez le nombre de lignes de pays que vous souhaitez afficher sur l’index',
 	'COUNTRYFLAG_WIDTH'					=> 'Largeur des drapeaux',
 	'COUNTRYFLAG_WIDTH_EXPLAIN'			=> 'Indiquez ici en pixels la largeur des drapeaux qui sont affichés à coté des noms d’utilisateurs.',
@@ -78,12 +81,16 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_ANIM_USER'				=> 'Drapeaux flottants dans les profils',
 	'COUNTRYFLAG_ANIM_USER_EXPLAIN'		=> 'Vous pouvez activer ou désactiver l’affichage des drapeaux flottants dans la vue des profils des membres.',
 	'COUNTRYFLAG_SORT_FLAG'				=> 'Drapeau du pays',
-	'COUNTRYFLAG'						=> 'Pays',
-	'USER_COUNTRYFLAG'					=> 'Drapeau du pays de l’utilisateur',
+	'COUNTRYFLAG_UPDATE_TITLE'			=> 'Vérification du total utilisateurs par pays',
+	'COUNTRYFLAG_UPDATE_GOOD'			=> 'Tous les pays ont un bon compte du total des utilisateurs',
+	'COUNTRYFLAG_UPDATE_TOTAL'			=> 'La réinitialisation du total des pays à bien été effectuée.',
+	'COUNTRYFLAG_UPDATE_FLAG'			=> 'Le total utilisateurs (<span class="flag-error">%1$s</span>) du pays %2$s <span class="flag-error">%3$s</span> n’est pas conforme (<span class="flag-good">%4$s</span>)',
+	'COUNTRYFLAG_UPDATE'				=> 'Réinitialiser le total des pays',
 	'COUNTRYFLAG_DISPLAY'				=> 'Par utilisation',
-	'COUNTRY_ERROR'						=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour pouvoir continuer !',
-	'COUNTRY_ERROR_REGISTER'			=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour finaliser votre inscription !',
+	'COUNTRY_ERROR'						=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour pouvoir continuer!',
+	'COUNTRY_ERROR_REGISTER'			=> 'Vous <b>devez</b> sélectionner le drapeau de votre pays pour finaliser votre inscription!',
 	'COUNTRY_REDIRECT_MSG'				=> 'Vous n’avez pas renseigné le drapeau de votre pays.<br/>Merci de bien vouloir prendre le temps de le renseigner %sSur cette page%s pour pouvoir continuer votre navigation. ',
 	'COUNTRYFLAG_COPY'					=> '<a href="%1$s" onclick="window.open(this.href);return false;" title="Breizh Country Flag">Drapeaux des Pays par Sylver35</a> » V %2$s',
 	'LOG_CONFIG_COUNTRYFLAG'			=> '<strong>Modification des paramètres des drapeaux</strong><br/> » Mise à jour de la configuration générale des drapeaux des pays',
+	'LOG_UPDATE_TOTAL_COUNTRY'			=> '<strong>Réinitialisation du total des pays</strong>',
 ));

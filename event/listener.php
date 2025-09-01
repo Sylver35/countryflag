@@ -106,7 +106,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function page_header_after()
 	{
-		// If country must be updated
+		// If country cache must be updated
 		if ($this->config['countryflag_refresh_cache'])
 		{
 			// Refresh the country cache now
@@ -358,10 +358,21 @@ class listener implements EventSubscriberInterface
 				$this->template->assign_vars([
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
+	}
+
+	/**
+	 * Add user id in viewtopic user cache data
+	 *
+	 * @param array $event
+	 */
+	public function viewtopic_cache_user_data($event)
+	{
+		$event['user_cache_data'] = array_merge($event['user_cache_data'], [
+			'user_id'	=> $event['row']['user_id'],
+		]);
 	}
 
 	/**
@@ -374,12 +385,11 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_display_topic'] && isset($event['user_poster_data']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_poster_data']['user_id']);
-			if ($flag['image'] !== '')
+			if ($flag['image'])
 			{
 				$event['post_row'] = array_merge($event['post_row'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
@@ -395,27 +405,14 @@ class listener implements EventSubscriberInterface
 		if ($this->config['countryflag_display_pm'] && isset($event['user_info']['user_id']))
 		{
 			$flag = $this->country->get_country_img_anim($event['user_info']['user_id']);
-			if ($flag['image'] !== '')
+			if ($flag['image'])
 			{
 				$event['msg_data'] = array_merge($event['msg_data'], [
 					'COUNTRY_IMG_ANIM'		=> $flag['image'],
 					'COUNTRY_USER'			=> $flag['country'],
-					'S_COUNTRY_IMG_ANIM'	=> true,
 				]);
 			}
 		}
-	}
-
-	/**
-	 * Add user id in viewtopic cache data
-	 *
-	 * @param array $event
-	 */
-	public function viewtopic_cache_user_data($event)
-	{
-		$event['user_cache_data'] = array_merge($event['user_cache_data'], [
-			'user_id' => $event['row']['user_id'],
-		]);
 	}
 
 	/**

@@ -37,8 +37,11 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'COUNTRYFLAG'						=> 'Country',
 	'ACP_COUNTRYFLAG_MODULE'			=> 'Flags of countries',
 	'ACP_COUNTRYFLAG_CONFIG'			=> 'Configuration',
+	'ACP_COUNTRYFLAG_UPDATE'			=> 'Update total',
+	'COUNTRYFLAG_USER'					=> 'User country flag',
 	'COUNTRYFLAG_TITLE'					=> 'Country flags configuration',
 	'COUNTRYFLAG_TITLE_EXPLAIN'			=> 'Adjust the settings of member’s flags',
 	'COUNTRYFLAG_REQUIRE'				=> 'Require the flag of member',
@@ -53,7 +56,7 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_SELECT_DEFAULT'		=> 'Default setting selected',
 	'COUNTRYFLAG_SELECT_BEFORE'			=> 'Before usernames',
 	'COUNTRYFLAG_SELECT_AFTER'			=> 'After usernames',
-	'COUNTRYFLAG_SEPARATE'				=> ' ', // Be careful : only non-breaking space here, don't touch
+	'COUNTRYFLAG_SEPARATE'				=> ' ', // Be careful! : only non-breaking space here, don't touch
 	'COUNTRYFLAG_CHGPROFILEINFO'		=> 'You do not have permission to edit your profile and therefore cannot enter your country.<br>Contact an administrator to fix this.',
 	'COUNTRYFLAG_BEFORE'				=> 'before',
 	'COUNTRYFLAG_AFTER'					=> 'after',
@@ -65,7 +68,7 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_INDEX_EXPLAIN'			=> 'Choose whether to display the list of countries chosen by users on the index',
 	'COUNTRYFLAG_LINE'					=> 'line',
 	'COUNTRYFLAG_LINES'					=> 'lines',
-	'COUNTRYFLAG_INDEX_LINES'			=> '&rdca; Number of lines',
+	'COUNTRYFLAG_INDEX_LINES'			=> 'Number of lines',
 	'COUNTRYFLAG_INDEX_LINES_EXPLAIN'	=> '&rdca; Choose the number of country lines you want to display on the index',
 	'COUNTRYFLAG_WIDTH'					=> 'Width of the flags',
 	'COUNTRYFLAG_WIDTH_EXPLAIN'			=> 'Indicate here in pixels the width of the flags that are displayed next to the usernames.',
@@ -78,12 +81,16 @@ $lang = array_merge($lang, array(
 	'COUNTRYFLAG_ANIM_USER'				=> 'Floating flags in profiles',
 	'COUNTRYFLAG_ANIM_USER_EXPLAIN'		=> 'You can enable or disable the display of floating flags in the profile view of members.',
 	'COUNTRYFLAG_SORT_FLAG'				=> 'Country flag',
-	'COUNTRYFLAG'						=> 'Country',
-	'USER_COUNTRYFLAG'					=> 'User country flag',
+	'COUNTRYFLAG_UPDATE_TITLE'			=> 'Checking total users by country',
+	'COUNTRYFLAG_UPDATE_GOOD'			=> 'All countries have a good account of total users',
+	'COUNTRYFLAG_UPDATE_TOTAL'			=> 'The country total has been reset successfully.',
+	'COUNTRYFLAG_UPDATE_FLAG'			=> 'Total users (<span class="flag-error">%1$s</span>) of the country %2$s <span class="flag-error">%3$s</span> is not compliant (<span class="flag-good">%4$s</span>)',
+	'COUNTRYFLAG_UPDATE'				=> 'Reset country totals',
 	'COUNTRYFLAG_DISPLAY'				=> 'By use',
 	'COUNTRY_ERROR'						=> 'You <b>must</b> select your country flag to continue!',
 	'COUNTRY_ERROR_REGISTER'			=> 'You <b>must</b> select your country flag to complete your registration!',
 	'COUNTRY_REDIRECT_MSG'				=> 'You did not fill in your country flag.<br/>Thank you for taking the time to fill it %sOn this page%s.',
 	'COUNTRYFLAG_COPY'					=> '<a href="%1$s" onclick="window.open(this.href);return false;" title="Breizh Country Flag">Breizh Country Flag by Sylver35</a> » V %2$s',
 	'LOG_CONFIG_COUNTRYFLAG'			=> '<strong>Changing the flags settings</strong><br/> » Update of the general configuration of the flags of countries',
+	'LOG_UPDATE_TOTAL_COUNTRY'			=> '<strong>Resetting the total countries</strong>',
 ));

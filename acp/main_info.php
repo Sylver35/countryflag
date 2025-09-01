@@ -21,6 +21,11 @@ class main_info
 					'auth'	=> 'ext_sylver35/countryflag && acl_a_board',
 					'cat'	=> ['ACP_COUNTRYFLAG_MODULE'],
 				],
+				'update'		=> [
+					'title'	=> 'ACP_COUNTRYFLAG_UPDATE',
+					'auth'	=> 'ext_sylver35/countryflag && acl_a_board',
+					'cat'	=> ['ACP_COUNTRYFLAG_MODULE'],
+				],
 			],
 		];
 	}

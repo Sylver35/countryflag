@@ -13,10 +13,10 @@
 	</div>
 {% endif %}
 
-<form id="acp_countryflag" method="post" action="{U_ACTION}">
-<fieldset>
-	<legend>{{ lang('ACP_COUNTRYFLAG_CONFIG') }}</legend>
-		
+<form id="acp_countryflag" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{{ lang('ACP_COUNTRYFLAG_CONFIG') }}</legend>
+			
 		<dl>
 			<dt><label for="countryflag_required">{{ lang('COUNTRYFLAG_REQUIRE') }}{{ lang('COLON') }}</label><br/><span>{{ lang('COUNTRYFLAG_REQUIRE_EXPLAIN') }}</span></dt>
 			<dd style="margin-top:12px;">
@@ -95,19 +95,43 @@
 		</dl>
 		
 		<p class="submit-buttons">
-			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}">&nbsp;
-			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">
 		</p>
-		
+		{{ S_FORM_TOKEN }}
+
 	</fieldset>
-	{S_FORM_TOKEN}
+</form>
+
+<form id="acp_countryflag_update" method="post" action="{{ U_ACTION_TOTAL }}">
+	<fieldset>
+		<legend>{{ lang('COUNTRYFLAG_UPDATE_TITLE') }}</legend>
+		<dl>
+		{% if not COUNTRYFLAG_ERROR_TOTAL %}
+			<dt></dt>
+			<dd style="font-size: 1.20em;">
+				<span class="flag-good">{{ lang('COUNTRYFLAG_UPDATE_GOOD') }}</span>
+			</dd>
+		</dl>
+		{% else %}
+			<dt><span class="flag-error">{{ lang('WARNING') }}</span></dt>
+			<dd style="font-size: 1.20em;">
+				{{ COUNTRYFLAG_ERROR_TOTAL }}
+			</dd>
+		</dl>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('COUNTRYFLAG_UPDATE') }}">
+		</p>
+		{{ S_FORM_TOKEN }}
+		{% endif %}
+	</fieldset>
 </form>
 
 <p class="flag-copy"><em>{{ COUNTRYFLAG_COPY }}</em></p>
 
 <script>
 	/**
-	* Change flags
+	* Change flag
 	*/
 	function update_flag(newFlag, newCountry){
 		$('#user_country_img').attr({'src':'{{ COUNTRY_FLAG_PATH }}'+newFlag+'.png', 'title':newCountry+' ('+newFlag+')', 'alt':newCountry});
