@@ -434,67 +434,44 @@ class country
 	{
 		if ($user_country != $ex_user_country)
 		{
-			$this->decrement_country($user_id, $ex_user_country);
-			$this->increment_country($user_id, $user_country);
+			$this->decrement_increment_country(false, $user_id, $ex_user_country);
+			$this->decrement_increment_country(true, $user_id, $user_country);
 		}
 	}
 
 	/**
-	 * Decrement total users for a country
+	 * Decrement or increment total users for a country
 	 *
+	 * @param bool $sort
 	 * @param int $user_id
 	 * @param string $user_country
 	 * @access public
 	 */
-	public function decrement_country($user_id, $user_country = '')
+	public function decrement_increment_country($sort, $user_id, $user_country = '')
 	{
-		if ($user_country)
+		// If $sort is true -> increment, false -> decrement
+		$sort = ($sort) ? '+ 1' : '- 1';
+		if ($user_country) // Update country by code_iso
 		{
-			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total - 1 WHERE code_iso = '{$user_country}'");
-			// Say to refresh the country users cache after
+			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total {$sort} WHERE code_iso = '{$user_country}'");
+			// Say to refresh the country cache after
 			$this->cache_country->update_config_refresh();
 		}
-		else 
+		else  // Update country by user_id in file cache
 		{
 			$country = $this->cache_country->country_users();
 			if (isset($country[$user_id]['user_id']))
 			{
-				$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total - 1 WHERE id = ' . $country[$user_id]['id']);
-				// Say to refresh the country users cache after
+				$id = $country[$user_id]['user_id'];
+				$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total {$sort} WHERE id = {$id}");
+				// Say to refresh the country cache after
 				$this->cache_country->update_config_refresh();
 			}
 		}
 	}
 
 	/**
-	 * Increment total users for a country
-	 *
-	 * @param int $user_id
-	 * @param string $user_country
-	 * @access public
-	 */
-	public function increment_country($user_id, $user_country = '')
-	{
-		if ($user_country)
-		{
-			$this->db->sql_query('UPDATE ' . $this->countryflag_table . " SET total = total + 1 WHERE code_iso = '{$user_country}'");
-			// Say to refresh the country users cache after
-			$this->cache_country->update_config_refresh();
-		}
-		else 
-		{
-			$country = $this->cache_country->country_users();
-			if (isset($country[$user_id]['user_id']))
-			{
-				$this->db->sql_query('UPDATE ' . $this->countryflag_table . ' SET total = total + 1 WHERE id = ' . $country[$user_id]['id']);
-				// Say to refresh the country users cache after
-				$this->cache_country->update_config_refresh();
-			}
-		}
-	}
-
-	/**
-	 * Add the extension collapsiblecategories in flags list
+	 * Add the extension collapsiblecategories in index country list
 	 * @return void
 	 * @access private
 	 */

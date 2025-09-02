@@ -290,7 +290,7 @@ class listener implements EventSubscriberInterface
 	{
 		if (isset($event['data']['user_country']) && $event['data']['user_country'])
 		{
-			$this->country->increment_country($event['user_id'], $event['data']['user_country']);
+			$this->country->decrement_increment_country(true, $event['user_id'], $event['data']['user_country']);
 		}
 	}
 
@@ -426,7 +426,7 @@ class listener implements EventSubscriberInterface
 		{
 			foreach ($event['user_ids'] as $user_id)
 			{
-				$this->country->decrement_country($user_id);
+				$this->country->decrement_increment_country(false, $user_id);
 			}
 		}
 	}
